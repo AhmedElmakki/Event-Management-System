@@ -8,15 +8,34 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you would call your backend API for authentication
-    // Example:
-    // fetch("/api/login", { method: "POST", body: JSON.stringify({username, password}) })
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    console.log("Login submitted:", { username, password });
-    navigate("/"); // redirect to dashboard or home after login
-  };
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message); // show error from backend
+      return;
+    }
+
+    // Save role or token for frontend usage
+    localStorage.setItem("role", data.user.role);
+    localStorage.setItem("token", data.token);
+
+    console.log("Login successful:", data.user);
+    navigate("/"); // go to dashboard
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+};
 
   return (
     <div className="sign-board">

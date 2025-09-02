@@ -2,6 +2,28 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Sidebar.css";
 
+const role = localStorage.getItem("role"); // "admin" or "user"
+
+{role === "admin" && (
+  <button className="add-event" onClick={() => navigate("/AddEvent")}>
+    <div className="plus">
+      <div className="pluss"></div>
+    </div>
+    <div className="label">Add Quick Event</div>
+  </button>
+)}
+
+{role === "admin" && (
+  <div className="menu-item" onClick={() => navigate("/manage-users")}>
+    👤 Manage Users
+  </div>
+)}
+
+const handleLogout = () => {
+  localStorage.removeItem("user"); // remove logged-in user
+  navigate("/login");              // redirect to login page
+};
+
 export default function Sidebar() {
   const navigate = useNavigate();
 
@@ -125,7 +147,9 @@ export default function Sidebar() {
           }}
         >
           <div className="menu-item">👤 Manage Users</div>
-          <div className="menu-item">🚪 Logout</div>
+          <div className="menu-item" onClick={handleLogout} style={{ cursor: "pointer" }}>
+            🚪 Logout
+          </div>
         </div>
       </div>
     </div>

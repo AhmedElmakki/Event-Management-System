@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-        "concurrently": "^9.2.1",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1",
-        "react-router-dom": "^7.8.2"
-      }
+    "concurrently": "^9.2.1",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.18.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.8.2"
+  }
 }

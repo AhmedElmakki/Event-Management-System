@@ -6,20 +6,55 @@ import "../styles/accounts.css";
 export default function Signup() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
+  const [name, setname] = useState("");
   const [email, setEmail] = useState("");
   const [ageGroup, setAgeGroup] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you would call your backend API for signup
-    // Example:
-    // fetch("/api/signup", { method: "POST", body: JSON.stringify({username, email, ageGroup, password}) })
 
-    console.log("Signup submitted:", { username, email, ageGroup, password, confirm });
-    navigate("/login"); // redirect to login after signup
-  };
+  const [error, setError] = useState("");
+  const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (password !== confirm) {
+          setError("Passwords do not match.");
+          return;
+        }
+
+        setError("");
+
+        try {
+          const res = await fetch("http://localhost:5000/api/auth/signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username,
+              name,
+              email,
+              ageGroup,
+              password,
+              role: "user", // default role
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            setError(data.message || "Something went wrong");
+            return;
+          }
+
+          console.log("Signup success:", data);
+          navigate("/login"); // redirect after successful signup
+        } catch (err) {
+          setError("Server error: " + err.message);
+        }
+    };
+
+
 
   return (
     <div className="sign-board">
@@ -50,8 +85,8 @@ export default function Signup() {
               id="Name"
               name="Name"
               placeholder="Enter Display Name"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={name}
+              onChange={(e) => setname(e.target.value)}
             />
           </div>
 
@@ -118,6 +153,7 @@ export default function Signup() {
           >
             Already have an account?
           </button>
+          {error && <p className="error-message">{error}</p>}
         </form>
       </div>
     </div>
