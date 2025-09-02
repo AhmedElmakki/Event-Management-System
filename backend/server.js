@@ -1,13 +1,17 @@
+import dotenv from "dotenv";
+// Load environment variables
+dotenv.config();
+
+
+
 // backend/server.js
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import { connectDB } from "./db.js";
 import authRoutes from "./routes/auth.js";
 
 
-// Load environment variables
-dotenv.config();
+
 
 
 const app = express();

@@ -2,30 +2,33 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Sidebar.css";
 
-const role = localStorage.getItem("role"); // "admin" or "user"
 
-{role === "admin" && (
-  <button className="add-event" onClick={() => navigate("/AddEvent")}>
-    <div className="plus">
-      <div className="pluss"></div>
+
+export default function Sidebar() {
+  const navigate = useNavigate();
+
+  const role = localStorage.getItem("role"); // "admin" or "user"
+
+  {role === "admin" && (
+    <button className="add-event" onClick={() => navigate("/AddEvent")}>
+      <div className="plus">
+        <div className="pluss"></div>
+      </div>
+      <div className="label">Add Quick Event</div>
+    </button>
+  )}
+
+  {role === "admin" && (
+    <div className="menu-item" onClick={() => navigate("/manage-users")}>
+      👤 Manage Users
     </div>
-    <div className="label">Add Quick Event</div>
-  </button>
-)}
-
-{role === "admin" && (
-  <div className="menu-item" onClick={() => navigate("/manage-users")}>
-    👤 Manage Users
-  </div>
-)}
-
-const handleLogout = () => {
+  )}
+  
+  const handleLogout = () => {
   localStorage.removeItem("user"); // remove logged-in user
   navigate("/login");              // redirect to login page
 };
 
-export default function Sidebar() {
-  const navigate = useNavigate();
 
   // Track which collapsibles are open
   const [activeSections, setActiveSections] = useState({});

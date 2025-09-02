@@ -5,7 +5,7 @@ import bellIcon from "../materials/bell.svg";
 import calendarIcon from "../materials/calender.svg";
 import search from "../materials/search icon.svg";
 
-const role = localStorage.getItem("role"); // "admin" or "user"
+
 
 
 
