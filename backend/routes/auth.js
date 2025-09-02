@@ -9,7 +9,7 @@ const router = express.Router();
 // Signup route
 router.post("/signup", async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, name, email, agegroup, password, role } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -26,7 +26,7 @@ router.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = new User({ username, email, password: hashedPassword, role });
+    const user = new User({ username, name, email, agegroup, password: hashedPassword, role });
     await user.save();
 
     // Return basic info
@@ -35,7 +35,9 @@ router.post("/signup", async (req, res) => {
       user: {
         id: user._id,
         username: user.username,
+        name: user.name,
         email: user.email,
+        agegroup: user.agegroup,
         role: user.role,
       },
     });

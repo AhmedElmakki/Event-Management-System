@@ -6,9 +6,9 @@ import "../styles/accounts.css";
 export default function Signup() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
-  const [name, setname] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [ageGroup, setAgeGroup] = useState("");
+  const [agegroup, setagegroup] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
@@ -22,11 +22,15 @@ export default function Signup() {
           return;
         }
 
+        if (!username || !name || !email || !agegroup || !password || !confirm) {
+          setError("Please fill in all fields");
+          return;
+        }
+
         setError("");
 
         try {
-          const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-          const res = await fetch(`${API_URL}/api/auth/signup`, {
+          const res = await fetch("http://localhost:5000/api/auth/signup", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -35,13 +39,19 @@ export default function Signup() {
               username,
               name,
               email,
-              ageGroup,
+              agegroup,
               password,
               role: "user", // default role
             }),
           });
 
-          const data = await res.json();
+
+
+
+            // Once you confirm the server sends proper JSON, switch back to:
+            const data = await res.json();
+
+            //const data = await res.json();
 
           if (!res.ok) {
             setError(data.message || "Something went wrong");
@@ -83,11 +93,11 @@ export default function Signup() {
             <label htmlFor="Name">Name:</label>
             <input
               type="text"
-              id="Name"
-              name="Name"
+              id="name"
+              name="name"
               placeholder="Enter Display Name"
               value={name}
-              onChange={(e) => setname(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
@@ -104,12 +114,12 @@ export default function Signup() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="age-group">Age Group:</label>
+            <label htmlFor="agegroup">Age Group:</label>
             <select
-              id="age-group"
-              name="age-group"
-              value={ageGroup}
-              onChange={(e) => setAgeGroup(e.target.value)}
+              id="agegroup"
+              name="agegroup"
+              value={agegroup}
+              onChange={(e) => setagegroup(e.target.value)}
             >
               <option value="">-- Select Age Group --</option>
               <option value="18-24">18 to 24</option>
