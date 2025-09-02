@@ -32,13 +32,13 @@ export default function ManageEvent() {
             <div className="actions-left">
               <button
                 className="btn-add"
-                onClick={() => (window.location.href = "Add-Event.html")}
+                onClick={() => (window.location.href = "AddEvent")}
               >
                 Add Events
               </button>
               <button
                 className="btn-att"
-                onClick={() => (window.location.href = "Attendees-insight.html")}
+                onClick={() => (window.location.href = "AttendeesInsight")}
               >
                 Attendee Insight
               </button>
@@ -72,7 +72,7 @@ export default function ManageEvent() {
           <div>
             <div
               className="event-card"
-              onClick={() => (window.location.href = "Event-edit.html")}
+              onClick={() => window.location.href = "/EventDetails"}
             >
               Events <h1>STUFF</h1>
             </div>
@@ -81,7 +81,7 @@ export default function ManageEvent() {
           <div>
             <div
               className="event-card"
-              onClick={() => (window.location.href = "Event-edit.html")}
+              onClick={() => window.location.href = "/EventDetails"}
             >
               Events <h1>STUFF</h1>
             </div>
@@ -90,7 +90,7 @@ export default function ManageEvent() {
           <div>
             <div
               className="event-card"
-              onClick={() => (window.location.href = "Event-edit.html")}
+              onClick={() => window.location.href = "/EventDetails"}
             >
               Events <h1>STUFF</h1>
             </div>

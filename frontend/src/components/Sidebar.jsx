@@ -34,7 +34,7 @@ export default function Sidebar() {
     <div className="sidebar">
       <h1>EventX</h1>
 
-      <button className="add-event" onClick={() => navigate("/add-event")}>
+      <button className="add-event" onClick={() => navigate("/AddEvent")}>
         <div className="plus">
           <div className="pluss"></div>
         </div>

@@ -1,10 +1,12 @@
 // src/pages/AttendeesInsight.jsx
 import Sidebar from "../components/Sidebar";
+import searchIcon1 from "../materials/search icon.svg";
 import "../styles/styles.css"; // your global styles
+
 
 export default function AttendeesInsight() {
   const goToSingleInsight = () => {
-    window.location.href = "/attendees-insight-single"; // adjust path if using React Router
+    window.location.href = "/AttendeesDetails"; // adjust path if using React Router
   };
 
   return (
@@ -27,7 +29,7 @@ export default function AttendeesInsight() {
             </div>
             <div className="searcharea2">
               <button className="search-button" title="Search">
-                <img src="/materials/search icon.svg" alt="search" />
+                <img src={searchIcon1} alt="search" />
               </button>
               <input type="text" placeholder="Search..." />
             </div>

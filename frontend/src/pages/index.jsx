@@ -46,7 +46,7 @@ export default function index() {
             <section className="dashboard-top-stats">
               <div 
                 className="dashboard-stat-box" 
-                onClick={() => (window.location.href = "manage-events.html")}
+                onClick={() => (window.location.href = "manage-event")}
               >
                 Events
               </div>
@@ -76,7 +76,7 @@ export default function index() {
           <aside className="dashboard-sidebar">
             <div 
               className="dashboard-card dashboard-upcoming-events" 
-              onClick={() => (window.location.href = "manage-events.html")}
+              onClick={() => (window.location.href = "manage-event")}
             >
               Upcoming Events
             </div>
