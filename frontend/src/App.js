@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Index from "./pages/index";
+import ManageEvent from "./pages/manage-event";
+import AttendeesInsight from "./pages/AttendeesInsight"
 
-function App() {
+export default function App() {
   return (
-    <div>
-      <h1>Clean Slate React + Express Project</h1>
-      <p>Backend connection ready. Add your fetch calls when needed.</p>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/manage-event" element={<ManageEvent />} />
+        <Route path="/AttendeesInsight" element={<AttendeesInsight />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;

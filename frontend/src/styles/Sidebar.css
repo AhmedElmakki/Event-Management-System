@@ -1,0 +1,134 @@
+.sidebar {
+  display: flex;
+  overflow:  hidden;
+  flex-direction: column;
+  width: 200px;
+  background: #111111;
+  color: #fff;
+  padding: 20px 10px;
+
+  min-height: 100%; 
+  height: 100%;          
+  overflow-y: auto;     
+  overflow-x: hidden;    
+}
+
+.sidebar h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.add-event {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  margin-bottom: 5%;
+  background: #282828;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+.add-event .plus {
+  display: inline-flex;       /* so the inner plus is centered */
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  background-color: #C1FF72;  /* square background */
+  border-radius: 10px;
+  margin: 5px;
+  margin-left: 5px;
+}
+
+.add-event .plus .pluss {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: white; /* this is the color of the plus */
+  -webkit-mask: url("../materials/white plus sign.svg") no-repeat center;
+  -webkit-mask-size: contain;
+  mask: url("../materials/white plus sign.svg") no-repeat center;
+  mask-size: contain;
+}
+
+
+.add-event .label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Collapsible section headers */
+.collapsible {
+  background: none;
+  border: none;
+  width: 90%;
+  text-align: left;
+  padding: 10px 3px;
+  font-size: 12px;
+  font-weight: 250;
+  color: #ffffff;
+  cursor: pointer;
+  letter-spacing: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-top: 1px solid #ffffff;   /* ← this draws the line above */
+  margin-top: 10px;             /* space above the line */
+}
+
+.collapsible:hover {
+  color: #fff;
+}
+
+.collapsible::after {
+  content: "";                     
+  display: inline-block;
+  width: 14px;                       
+  height: 14px;
+  background-image: url("../materials/down-arrow.png");
+  transform: rotate(-90deg);
+  background-size: contain;           
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 0.3s;
+  filter: brightness(0) invert(1);
+}
+
+.collapsible.active::after {
+  transform: rotate(0);
+}
+
+/* Collapsible content */
+.content {
+  max-height: 0;                 /* start hidden */
+  overflow: hidden;              /* hide inner items */
+  display: flex;
+  flex-direction: column;
+  transition: max-height 0.3s ease; /* smooth animation */
+  
+}
+
+.collapsible.active + .content {
+  max-height: 500px; /* big enough to fit content */
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 8px;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.menu-item:hover {
+  background: #222;
+}
