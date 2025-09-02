@@ -9,25 +9,11 @@ export default function Sidebar() {
 
   const role = localStorage.getItem("role"); // "admin" or "user"
 
-  {role === "admin" && (
-    <button className="add-event" onClick={() => navigate("/AddEvent")}>
-      <div className="plus">
-        <div className="pluss"></div>
-      </div>
-      <div className="label">Add Quick Event</div>
-    </button>
-  )}
-
-  {role === "admin" && (
-    <div className="menu-item" onClick={() => navigate("/manage-users")}>
-      👤 Manage Users
-    </div>
-  )}
-  
-  const handleLogout = () => {
-  localStorage.removeItem("user"); // remove logged-in user
-  navigate("/login");              // redirect to login page
-};
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  window.location.href = "/login"; // redirect to login
+}
 
 
   // Track which collapsibles are open
@@ -59,12 +45,14 @@ export default function Sidebar() {
     <div className="sidebar">
       <h1>EventX</h1>
 
-      <button className="add-event" onClick={() => navigate("/AddEvent")}>
-        <div className="plus">
-          <div className="pluss"></div>
-        </div>
-        <div className="label">Add Quick Event</div>
-      </button>
+  {role === "admin" && (
+    <button className="add-event" onClick={() => navigate("/AddEvent")}>
+      <div className="plus">
+        <div className="pluss"></div>
+      </div>
+      <div className="label">Add Quick Event</div>
+    </button>
+  )}
 
       <div className="side-bar-content">
         {/* Main Navigation */}
@@ -149,8 +137,12 @@ export default function Sidebar() {
             maxHeight: activeSections["Account Management"] ? "500px" : "0",
           }}
         >
-          <div className="menu-item">👤 Manage Users</div>
-          <div className="menu-item" onClick={handleLogout} style={{ cursor: "pointer" }}>
+  {role === "admin" && (
+    <div className="menu-item" onClick={() => navigate("/manage-users")}>
+      👤 Manage Users
+    </div>
+  )}
+          <div className="menu-item" onClick={logout} style={{ cursor: "pointer" }}>
             🚪 Logout
           </div>
         </div>

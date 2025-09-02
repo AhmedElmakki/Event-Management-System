@@ -5,8 +5,8 @@
   box-sizing: border-box;
 }
 
-body {
-  background: #eaeaea;
+.global-body {
+  background: #eaeaea; 
   min-height: 100vh;
   overflow-y: hidden;
   justify-content: flex-start; /* stick board to the left */

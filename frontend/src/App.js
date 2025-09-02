@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
 import Index from "./pages/index";
 import ManageEvent from "./pages/manage-event";
 import AttendeesInsight from "./pages/AttendeesInsight"
@@ -13,13 +14,13 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/manage-event" element={<ManageEvent />} />
-        <Route path="/AttendeesInsight" element={<AttendeesInsight />} />
-        <Route path="/AttendeesDetails" element={<AttendeesDetails />} />
-        <Route path="/AddEvent" element={<AddEvent />} />
-        <Route path="/EventDetails" element={<EventDetails />} />
-        <Route path="/EditEvent" element={<EditEvent />} />
+        <Route path="/" element={<PrivateRoute><Index/></PrivateRoute>} />
+        <Route path="/manage-event" element={<PrivateRoute><ManageEvent /></PrivateRoute>} />
+        <Route path="/AttendeesInsight" element={<PrivateRoute><AttendeesInsight /></PrivateRoute>} />
+        <Route path="/AttendeesDetails" element={<PrivateRoute><AttendeesDetails /></PrivateRoute>} />
+        <Route path="/AddEvent" element={<PrivateRoute><AddEvent /></PrivateRoute>} />
+        <Route path="/EventDetails" element={<PrivateRoute><EventDetails /></PrivateRoute>} />
+        <Route path="/EditEvent" element={<PrivateRoute><EditEvent /></PrivateRoute>} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Signup" element={<Signup />} />
 
