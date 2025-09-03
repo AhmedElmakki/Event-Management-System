@@ -64,4 +64,26 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.post("/:id/join", async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    if (event.participants.includes(userId)) {
+      // remove (opt out)
+      event.participants = event.participants.filter(id => id.toString() !== userId);
+    } else {
+      // join
+      event.participants.push(userId);
+    }
+
+    await event.save();
+    res.json(event);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

@@ -1,38 +1,29 @@
 // backend/models/Event.js
 import mongoose from "mongoose";
 
-const eventSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    description: String,
-    venue: String,
+const eventSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  date: String,
+  time: String,
+  venue: String,
+  description: String,
+  ticketPrice: Number,
+  seatAmount: Number,
+  availableSeats: Number,
+  tags: [String],
+  expectedAttendance: Number,
 
-    // Core scheduling
-    date: { type: Date, required: true },
-    time: String,
+  // participants = array of user IDs
+  participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
-    // Tickets & seats
-    ticketPrice: { type: Number, default: 0 },
-    seatAmount: { type: Number, default: 0 },
-    availableSeats: { type: Number, default: 0 },
+  // computed automatically
+  popularity: { type: Number, default: 0 },
+});
 
-    // Event classification
-    status: {
-      type: String,
-      enum: ["upcoming", "pending", "closed"],
-      default: "upcoming",
-    },
-    tags: [String],
-
-    // Engagement / metrics
-    expectedAttendance: { type: Number, default: 0 },
-    popularity: { type: Number, default: 0 }, // could be computed later (like # of participants)
-
-    // Relations
-    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  },
-  { timestamps: true }
-);
+// ✅ Keep popularity in sync with participants length
+eventSchema.pre("save", function (next) {
+  this.popularity = this.participants.length;
+  next();
+});
 
 export default mongoose.model("Event", eventSchema);

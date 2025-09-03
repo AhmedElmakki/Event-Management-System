@@ -28,15 +28,24 @@ export default function AddEvent() {
   e.preventDefault();
 
   try {
+    const token = localStorage.getItem("token"); // ✅ get token stored at login
     const response = await fetch("http://localhost:5000/api/events", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+       },
       body: JSON.stringify({
-        ...formData,
+        name: formData.name,
+        date: formData.date,
+        time: formData.time,
+        venue: formData.venue,
+        description: formData.description,
         ticketPrice: formData.ticketPrice ? Number(formData.ticketPrice) : null,
         seatAmount: formData.seatAmount ? Number(formData.seatAmount) : null,
-        availableSeats: formData.availableSeats ? Number(formData.availableSeats) : null,
-        tags: formData.tags.split(",").map((t) => t.trim()), // convert to array
+        tags: formData.tags
+          ? formData.tags.split(",").map((t) => t.trim())
+          : [],
       }),
     });
 
@@ -56,7 +65,6 @@ export default function AddEvent() {
       description: "",
       ticketPrice: "",
       seatAmount: "",
-      availableSeats: "",
       tags: "",
     });
   } catch (err) {
@@ -153,17 +161,6 @@ export default function AddEvent() {
                   name="ticketPrice"
                   id="ticketPrice"
                   value={formData.ticketPrice}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="seatAmount">Seat Amount:</label>
-                <input
-                  type="number"
-                  name="seatAmount"
-                  id="seatAmount"
-                  value={formData.seatAmount}
                   onChange={handleChange}
                 />
               </div>

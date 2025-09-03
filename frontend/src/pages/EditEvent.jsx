@@ -1,10 +1,24 @@
 // src/pages/EditEvent.jsx
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 
 export default function EditEvent() {
+
+    const [formData, setFormData] = useState({
+    name: "",
+    date: "",
+    venue: "",
+    time: "",
+    description: "",
+    ticketPrice: "",
+    seatAmount: "",
+    availableSeats: "",
+    tags: "",
+  });
+
+
     const { id } = useParams(); 
     const navigate = useNavigate();
     const role = localStorage.getItem("role");
@@ -99,7 +113,7 @@ export default function EditEvent() {
                   name="name"
                   id="name"
                   value={formData.name}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
               <div>
@@ -109,7 +123,7 @@ export default function EditEvent() {
                   name="date"
                   id="date"
                   value={formData.date}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
             </div>
@@ -123,7 +137,7 @@ export default function EditEvent() {
                   name="venue"
                   id="venue"
                   value={formData.venue}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
               <div>
@@ -133,7 +147,7 @@ export default function EditEvent() {
                   name="time"
                   id="time"
                   value={formData.time}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
             </div>
@@ -147,7 +161,7 @@ export default function EditEvent() {
                   name="description"
                   id="description"
                   value={formData.description}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
             </div>
@@ -161,7 +175,7 @@ export default function EditEvent() {
                   name="ticketPrice"
                   id="ticketPrice"
                   value={formData.ticketPrice}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
 
@@ -172,7 +186,7 @@ export default function EditEvent() {
                   name="seatAmount"
                   id="seatAmount"
                   value={formData.seatAmount}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
 
@@ -183,7 +197,7 @@ export default function EditEvent() {
                   name="availableSeats"
                   id="availableSeats"
                   value={formData.availableSeats}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
 
@@ -194,7 +208,7 @@ export default function EditEvent() {
                   name="tags"
                   id="tags"
                   value={formData.tags}
-                  onChange={handleChange}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Comma separated tags"
                 />
               </div>

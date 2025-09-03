@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // to grab event id from URL
+import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 
 
 export default function EventDetails() {
       const { id } = useParams(); // expects route like /EventDetails/:id
+      const navigate = useNavigate();
       const role = localStorage.getItem("role"); // "admin" or "user"
+      const userId = localStorage.getItem("userId"); // make sure you store this on login
       const [event, setEvent] = useState(null);
+      const [isJoined, setIsJoined] = useState(false);
 
-  // ✅ get ID from query string
-  const params = new URLSearchParams(window.location.search);
-  const eventId = params.get("id");
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -20,12 +20,38 @@ export default function EventDetails() {
         if (!res.ok) throw new Error("Failed to fetch event details");
         const data = await res.json();
         setEvent(data);
+
+        // check if user is already in participants
+        if (data.participants?.includes(userId)) {
+          setIsJoined(true);
+        }
       } catch (err) {
         console.error(err);
       }
     };
     fetchEvent();
-  }, [id]);
+  }, [id, userId]);
+
+  const handleJoinToggle = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/events/${id}/join`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // use token if you protect the route
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update participation");
+
+      const data = await res.json();
+      setEvent(data);
+      setIsJoined(data.participants.includes(userId));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (!event) return <p style={{ textAlign: "center" }}>Loading event...</p>;
 
@@ -84,7 +110,7 @@ export default function EventDetails() {
               </div>
               <div>
                 <label>Popularity:</label>
-                <textarea readOnly value={event.popularity} /> {/* ✅ here */}
+                <textarea readOnly value={event.popularity} />
               </div>
             </div>
 
@@ -105,20 +131,34 @@ export default function EventDetails() {
                 <div className="qr-placeholder">QR code payment area</div>
 
                 <div className="form-actions">
+                  {/* ✅ Join / Opt-out for all users */}
                   <button
                     type="button"
-                    className="btn-edit"
-                    onClick={() => (window.location.href = `/EditEvent?id=${event._id}`)}
+                    className="btn-join"
+                    onClick={handleJoinToggle}
                   >
-                    Edit
+                    {isJoined ? "Opt Out" : "Join Event"}
                   </button>
-                  <button
-                    type="button"
-                    className="btn-insight"
-                    onClick={() => (window.location.href = `/AttendeesDetails?id=${event._id}`)}
-                  >
-                    Attendees insight
-                  </button>
+
+                  {/* ✅ Admin-only buttons */}
+                  {role === "admin" && (
+                    <>
+                      <button
+                        type="button"
+                        className="btn-edit"
+                        onClick={() => navigate(`/EditEvent/${event._id}`)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-insight"
+                        onClick={() => navigate(`/AttendeesDetails/${event._id}`)}
+                      >
+                        Attendees insight
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
