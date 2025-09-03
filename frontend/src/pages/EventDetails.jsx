@@ -1,114 +1,121 @@
-// src/pages/EventDetails.jsx
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom"; // to grab event id from URL
 import Sidebar from "../components/Sidebar";
 
 
+
 export default function EventDetails() {
+      const { id } = useParams(); // expects route like /EventDetails/:id
+      const role = localStorage.getItem("role"); // "admin" or "user"
+      const [event, setEvent] = useState(null);
+
+  // ✅ get ID from query string
+  const params = new URLSearchParams(window.location.search);
+  const eventId = params.get("id");
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/events/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch event details");
+        const data = await res.json();
+        setEvent(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchEvent();
+  }, [id]);
+
+  if (!event) return <p style={{ textAlign: "center" }}>Loading event...</p>;
+
+
   return (
-    <div className="global-body" >
+    <div className="global-body">
       <div className="board">
         <Sidebar />
-
         <div className="main-content">
-          <h1
-            style={{
-              textAlign: "center",
-              marginBottom: "30px",
-              color: "#333",
-            }}
-          >
+          <h1 style={{ textAlign: "center", marginBottom: "30px", color: "#333" }}>
             Event Details
           </h1>
 
           <form className="event-details-form">
-            {/* Section 1 */}
             <div className="event-details text-group">
               <div>
-                <label htmlFor="event-name">Event Name:</label>
-                <textarea readOnly name="event-name" id="event-name" />
+                <label>Event Name:</label>
+                <textarea readOnly value={event.name} />
               </div>
               <div>
-                <label htmlFor="event-date">Event Date:</label>
-                <textarea readOnly name="event-date" id="event-date" />
+                <label>Event Date:</label>
+                <textarea readOnly value={event.date} />
               </div>
             </div>
 
-            {/* Section 2 */}
             <div className="event-details text-group">
               <div>
-                <label htmlFor="event-venue">Event Venue:</label>
-                <textarea readOnly name="event-venue" id="event-venue" />
+                <label>Event Venue:</label>
+                <textarea readOnly value={event.venue} />
               </div>
               <div>
-                <label htmlFor="event-time">Event Time:</label>
-                <textarea readOnly name="event-time" id="event-time" />
+                <label>Event Time:</label>
+                <textarea readOnly value={event.time} />
               </div>
             </div>
 
-            {/* Section 3 */}
             <div className="event-details">
               <div className="event-dis">
-                <label htmlFor="event-description">Event Description:</label>
-                <textarea readOnly name="event-description" id="event-description" />
+                <label>Event Description:</label>
+                <textarea readOnly value={event.description} />
               </div>
             </div>
 
-            {/* Section 4 */}
             <div className="event-details grid-2">
               <div>
-                <label htmlFor="ticket-price">Ticket Price:</label>
-                <textarea readOnly name="ticket-price" id="ticket-price" />
+                <label>Ticket Price:</label>
+                <textarea readOnly value={event.ticketPrice} />
               </div>
-
               <div>
-                <label htmlFor="seat-amount">Seat Amount:</label>
-                <textarea readOnly name="seat-amount" id="seat-amount" />
+                <label>Seat Amount:</label>
+                <textarea readOnly value={event.seatAmount} />
               </div>
-
               <div>
-                <label htmlFor="available-seats">Available Seats:</label>
-                <textarea readOnly name="available-seats" id="available-seats" />
+                <label>Available Seats:</label>
+                <textarea readOnly value={event.availableSeats} />
               </div>
-
               <div>
-                <label htmlFor="popularity">Popularity:</label>
-                <textarea readOnly name="popularity" id="popularity" />
+                <label>Popularity:</label>
+                <textarea readOnly value={event.popularity} /> {/* ✅ here */}
               </div>
             </div>
 
-            {/* Section 5 */}
             <div className="event-details event-bottom-row">
-              <div className="event-seat-allocation-graph">
-                {/* seat graph content later */}
-              </div>
-
+              <div className="event-seat-allocation-graph">{/* later */}</div>
               <div>
                 <div className="event-details two-col">
                   <div>
-                    <label htmlFor="tags">Tags:</label>
-                    <textarea readOnly name="tags" id="tags" />
+                    <label>Tags:</label>
+                    <textarea readOnly value={event.tags?.join(", ")} />
                   </div>
                   <div>
-                    <label htmlFor="expected-attendance">Expected Attendance:</label>
-                    <textarea readOnly name="expected-attendance" id="expected-attendance" />
+                    <label>Expected Attendance:</label>
+                    <textarea readOnly value={event.expectedAttendance} />
                   </div>
                 </div>
 
-                <div className="qr-placeholder">
-                  QR code payment area (leave blank)
-                </div>
+                <div className="qr-placeholder">QR code payment area</div>
 
                 <div className="form-actions">
                   <button
                     type="button"
                     className="btn-edit"
-                    onClick={() => (window.location.href = "/EditEvent")}
+                    onClick={() => (window.location.href = `/EditEvent?id=${event._id}`)}
                   >
                     Edit
                   </button>
                   <button
                     type="button"
                     className="btn-insight"
-                    onClick={() => (window.location.href = "/AttendeesDetails")}
+                    onClick={() => (window.location.href = `/AttendeesDetails?id=${event._id}`)}
                   >
                     Attendees insight
                   </button>

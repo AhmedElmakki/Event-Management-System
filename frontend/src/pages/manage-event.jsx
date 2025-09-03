@@ -1,10 +1,35 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import searchIcon from "../materials/search icon.svg"; // import images properly
-
+import searchIcon from "../materials/search icon.svg";
 
 export default function ManageEvent() {
+  const role = localStorage.getItem("role"); // "admin" or "user"
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/events");
+        if (!res.ok) throw new Error("Failed to fetch events");
+        const data = await res.json();
+        setEvents(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  if (loading) return <p style={{ textAlign: "center" }}>Loading events...</p>;
+
   return (
-    <div className="global-body" >
+    <div className="global-body">
       <div className="board">
         <Sidebar />
 
@@ -31,20 +56,23 @@ export default function ManageEvent() {
             </div>
 
             <div className="manager-actions">
-              <div className="actions-left">
-                <button
-                  className="btn-add"
-                  onClick={() => (window.location.href = "AddEvent")}
-                >
-                  Add Events
-                </button>
-                <button
-                  className="btn-att"
-                  onClick={() => (window.location.href = "AttendeesInsight")}
-                >
-                  Attendee Insight
-                </button>
-              </div>
+              {role === "admin" && (
+                <div className="actions-left">
+                  <button
+                    className="btn-add"
+                    onClick={() => navigate("/AddEvent")}
+                  >
+                    Add Events
+                  </button>
+
+                  <button
+                    className="btn-att"
+                    onClick={() => navigate("/AttendeesInsight")}
+                  >
+                    Attendee Insight
+                  </button>
+                </div>
+              )}
 
               <div className="actions-right">
                 <select className="sort-select">
@@ -71,32 +99,23 @@ export default function ManageEvent() {
           </div>
 
           <div className="grid-holder">
-            <div>
-              <div
-                className="event-card"
-                onClick={() => window.location.href = "/EventDetails"}
-              >
-                Events <h1>STUFF</h1>
-              </div>
-            </div>
-
-            <div>
-              <div
-                className="event-card"
-                onClick={() => window.location.href = "/EventDetails"}
-              >
-                Events <h1>STUFF</h1>
-              </div>
-            </div>
-
-            <div>
-              <div
-                className="event-card"
-                onClick={() => window.location.href = "/EventDetails"}
-              >
-                Events <h1>STUFF</h1>
-              </div>
-            </div>
+            {events.length === 0 ? (
+              <p>No events available</p>
+            ) : (
+              events.map((event) => (
+                <div key={event._id}>
+                  <div
+                    className="event-card"
+                    onClick={() => navigate(`/EventDetails/${event._id}`)}
+                  >
+                    <h2>{event.name}</h2>
+                    <p>{new Date(event.date).toLocaleDateString()}</p>
+                    <p>{event.venue}</p>
+                    <p>Status: {event.status || "upcoming"}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

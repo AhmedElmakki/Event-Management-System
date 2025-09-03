@@ -19,8 +19,8 @@ export default function App() {
         <Route path="/AttendeesInsight" element={<PrivateRoute><AttendeesInsight /></PrivateRoute>} />
         <Route path="/AttendeesDetails" element={<PrivateRoute><AttendeesDetails /></PrivateRoute>} />
         <Route path="/AddEvent" element={<PrivateRoute><AddEvent /></PrivateRoute>} />
-        <Route path="/EventDetails" element={<PrivateRoute><EventDetails /></PrivateRoute>} />
-        <Route path="/EditEvent" element={<PrivateRoute><EditEvent /></PrivateRoute>} />
+        <Route path="/EventDetails/:id" element={<PrivateRoute><EventDetails /></PrivateRoute>} />
+        <Route path="/EditEvent/:id" element={<PrivateRoute><EditEvent /></PrivateRoute>} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Signup" element={<Signup />} />
 

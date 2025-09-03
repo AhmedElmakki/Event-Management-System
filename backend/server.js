@@ -9,6 +9,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./db.js";
 import authRoutes from "./routes/auth.js";
+import eventRoutes from "./routes/events.js";
 
 
 
@@ -30,6 +31,7 @@ connectDB();
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
 
 
 

@@ -1,10 +1,80 @@
 // src/pages/EditEvent.jsx
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 
 export default function EditEvent() {
+    const { id } = useParams(); 
+    const navigate = useNavigate();
+    const role = localStorage.getItem("role");
+
+
+    useEffect(() => {
+    if (role !== "admin") {
+      navigate(`/EventDetails/${id}`);
+    }
+    }, [role, navigate, id]);
+
+
+
+    useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/events/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch event");
+        const event = await res.json();
+
+        setFormData({
+          name: event.name || "",
+          date: event.date ? event.date.split("T")[0] : "", // format YYYY-MM-DD
+          venue: event.venue || "",
+          time: event.time || "",
+          description: event.description || "",
+          ticketPrice: event.ticketPrice || "",
+          seatAmount: event.seatAmount || "",
+          availableSeats: event.availableSeats || "",
+          tags: event.tags ? event.tags.join(", ") : "",
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
+
+  // ✅ handle form input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ✅ handle save (PUT request)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/events/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          tags: formData.tags.split(",").map((tag) => tag.trim()),
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update event");
+
+      navigate(`/EventDetails/${id}`); // redirect back to details page
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
   return (
-    <div className="global-body" >
+    <div className="global-body">
       <div className="board">
         <Sidebar />
 
@@ -19,49 +89,65 @@ export default function EditEvent() {
             Edit Event
           </h1>
 
-          <form className="event-details-form">
+          <form className="event-details-form" onSubmit={handleSubmit}>
             {/* Section 1 */}
             <div className="event-details text-group">
               <div>
-                <label htmlFor="event-name">Event Name:</label>
+                <label htmlFor="name">Event Name:</label>
                 <input
                   type="text"
-                  name="event-name"
-                  id="event-name"
-                  placeholder="Enter event name"
+                  name="name"
+                  id="name"
+                  value={formData.name}
+                  onChange={handleChange}
                 />
               </div>
               <div>
-                <label htmlFor="event-date">Event Date:</label>
-                <input type="date" name="event-date" id="event-date" />
+                <label htmlFor="date">Event Date:</label>
+                <input
+                  type="date"
+                  name="date"
+                  id="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                />
               </div>
             </div>
 
             {/* Section 2 */}
             <div className="event-details text-group">
               <div>
-                <label htmlFor="event-venue">Event Venue:</label>
+                <label htmlFor="venue">Event Venue:</label>
                 <input
                   type="text"
-                  name="event-venue"
-                  id="event-venue"
-                  placeholder="Enter venue"
+                  name="venue"
+                  id="venue"
+                  value={formData.venue}
+                  onChange={handleChange}
                 />
               </div>
               <div>
-                <label htmlFor="event-time">Event Time:</label>
-                <input type="time" name="event-time" id="event-time" />
+                <label htmlFor="time">Event Time:</label>
+                <input
+                  type="time"
+                  name="time"
+                  id="time"
+                  value={formData.time}
+                  onChange={handleChange}
+                />
               </div>
             </div>
 
             {/* Section 3 */}
             <div className="event-details">
               <div className="event-dis">
-                <label htmlFor="event-description">Event Description:</label>
+                <label htmlFor="description">Event Description:</label>
                 <input
-                  name="event-description"
-                  id="event-description"
-                  placeholder="Enter event description"
+                  type="text"
+                  name="description"
+                  id="description"
+                  value={formData.description}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -69,18 +155,36 @@ export default function EditEvent() {
             {/* Section 4 */}
             <div className="event-details grid-2">
               <div>
-                <label htmlFor="ticket-price">Ticket Price:</label>
-                <input type="number" name="ticket-price" id="ticket-price" />
+                <label htmlFor="ticketPrice">Ticket Price:</label>
+                <input
+                  type="number"
+                  name="ticketPrice"
+                  id="ticketPrice"
+                  value={formData.ticketPrice}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
-                <label htmlFor="seat-amount">Seat Amount:</label>
-                <input type="number" name="seat-amount" id="seat-amount" />
+                <label htmlFor="seatAmount">Seat Amount:</label>
+                <input
+                  type="number"
+                  name="seatAmount"
+                  id="seatAmount"
+                  value={formData.seatAmount}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
-                <label htmlFor="available-seats">Available Seats:</label>
-                <input type="number" name="available-seats" id="available-seats" />
+                <label htmlFor="availableSeats">Available Seats:</label>
+                <input
+                  type="number"
+                  name="availableSeats"
+                  id="availableSeats"
+                  value={formData.availableSeats}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
@@ -89,6 +193,8 @@ export default function EditEvent() {
                   type="text"
                   name="tags"
                   id="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
                   placeholder="Comma separated tags"
                 />
               </div>
@@ -102,7 +208,7 @@ export default function EditEvent() {
               <button
                 type="button"
                 className="btn-cancel"
-                onClick={() => (window.location.href = "/EventDetails")}
+                onClick={() => navigate(`/EventDetails/${id}`)}
               >
                 Cancel
               </button>

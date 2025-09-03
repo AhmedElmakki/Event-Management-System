@@ -1,18 +1,38 @@
 // backend/models/Event.js
 import mongoose from "mongoose";
 
-const eventSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: String,
-  venue: String,
-  date: { type: Date, required: true },
-  time: String,
-  ticketPrice: Number,
-  seatAmount: Number,
-  availableSeats: Number,
-  tags: [String],
-  participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // users who opted in
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // admin who created the event
-}, { timestamps: true });
+const eventSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    description: String,
+    venue: String,
+
+    // Core scheduling
+    date: { type: Date, required: true },
+    time: String,
+
+    // Tickets & seats
+    ticketPrice: { type: Number, default: 0 },
+    seatAmount: { type: Number, default: 0 },
+    availableSeats: { type: Number, default: 0 },
+
+    // Event classification
+    status: {
+      type: String,
+      enum: ["upcoming", "pending", "closed"],
+      default: "upcoming",
+    },
+    tags: [String],
+
+    // Engagement / metrics
+    expectedAttendance: { type: Number, default: 0 },
+    popularity: { type: Number, default: 0 }, // could be computed later (like # of participants)
+
+    // Relations
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  },
+  { timestamps: true }
+);
 
 export default mongoose.model("Event", eventSchema);

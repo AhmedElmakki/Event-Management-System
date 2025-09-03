@@ -25,44 +25,46 @@ export default function AddEvent() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const response = await fetch("http://localhost:5000/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          tags: formData.tags.split(",").map((t) => t.trim()), // convert tags string to array
-        }),
-      });
+  try {
+    const response = await fetch("http://localhost:5000/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...formData,
+        ticketPrice: formData.ticketPrice ? Number(formData.ticketPrice) : null,
+        seatAmount: formData.seatAmount ? Number(formData.seatAmount) : null,
+        availableSeats: formData.availableSeats ? Number(formData.availableSeats) : null,
+        tags: formData.tags.split(",").map((t) => t.trim()), // convert to array
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error("Failed to create event");
-      }
+    if (!response.ok) throw new Error("Failed to create event");
 
-      const data = await response.json();
-      setSuccess("Event created successfully!");
-      setError("");
-      console.log(data);
-      // Optionally reset form
-      setFormData({
-        name: "",
-        date: "",
-        time: "",
-        venue: "",
-        description: "",
-        ticketPrice: "",
-        seatAmount: "",
-        availableSeats: "",
-        tags: "",
-      });
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-      setSuccess("");
-    }
-  };
+    const data = await response.json();
+    setSuccess("Event created successfully!");
+    setError("");
+    console.log(data);
+
+    // Reset form
+    setFormData({
+      name: "",
+      date: "",
+      time: "",
+      venue: "",
+      description: "",
+      ticketPrice: "",
+      seatAmount: "",
+      availableSeats: "",
+      tags: "",
+    });
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+    setSuccess("");
+  }
+};
 
   return (
     <div className="global-body" >

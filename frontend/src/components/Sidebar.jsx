@@ -77,9 +77,11 @@ function logout() {
             📅 Manage Events
           </a>
           <a className="menu-item">🎟️ Booking & Tickets</a>
+          {role === "admin" && (
           <a onClick={() => navigate("/AttendeesInsight")} className="menu-item">
             👥 Attendee Insights
           </a>
+           )}
           <div className="menu-item">📈 Analytics & Reports</div>
         </div>
 
