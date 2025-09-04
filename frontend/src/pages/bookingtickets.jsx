@@ -231,17 +231,7 @@ export default function BookingTickets() {
                       </p>
                       <p>⏰ Time: {event.time || "TBA"}</p>
                     </div>
-                    <button
-                      className="btn-view"
-                      onClick={() => navigate(`/EventDetails/${event._id}`)}
-                      style={{
-                        position: "absolute",
-                        bottom: "10px",
-                        right: "10px",
-                      }}
-                    >
-                      Details
-                    </button>
+                
                   </div>
                 ))}
             </div>

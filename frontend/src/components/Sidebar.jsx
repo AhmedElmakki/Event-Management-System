@@ -84,7 +84,17 @@ function logout() {
           <a onClick={() => navigate("/AttendeesInsight")} className="menu-item">
             👥 Attendee Insights
           </a>
+
+          
+
+          
            )}
+
+              {role === "admin" && (
+                <a onClick={() => navigate("/ExportData")} className="menu-item">
+            📅 Export Data
+              </a>
+          )}
 
         </div>
 

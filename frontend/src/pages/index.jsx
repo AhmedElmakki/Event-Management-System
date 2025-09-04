@@ -199,12 +199,15 @@ export default function Index() {
             <aside className="dashboard-sidebar"  style={{ flex: 1 }} >
               <div className="dashboard-card dashboard-upcoming-events">
                 <h3>Upcoming Events</h3>
+                <hr style={{ border: "0.5px solid #ccc", margin: "8px 0" }} />
                 {events.filter(e => e.status === "upcoming" || !e.status).map(event => (
                   <div key={event._id} className="upcoming-event-card">
                     <strong>{event.name}</strong>
                     <p>{event.date ? new Date(event.date).toLocaleDateString() : "No date set"}</p>
                     <p>{event.venue}</p>
+                    <hr style={{ border: "0.5px solid #ccc", margin: "8px 0" }} />
                   </div>
+                  
                 ))}
                 {events.filter(e => e.status === "upcoming" || !e.status).length === 0 && <p>No upcoming events</p>}
               </div>
