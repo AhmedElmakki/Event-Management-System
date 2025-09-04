@@ -17,35 +17,13 @@ import {
   Legend
 } from "recharts";
 
-// Helper functions for age groups
-function getAgeData(participants) {
-  if (!participants || !participants.length) return [];
-  return Object.entries(
-    participants.reduce((acc, p) => {
-      const agegroup = p.agegroup || "Unknown";
-      acc[agegroup] = (acc[agegroup] || 0) + 1;
-      return acc;
-    }, {})
-  ).map(([name, value]) => ({ name, value }));
-}
 
-function getTopAgeGroup(participants) {
-  if (!participants || !participants.length) return { label: "N/A", count: 0, percent: 0 };
-  const counts = participants.reduce((acc, p) => {
-    const agegroup = p.agegroup || "Unknown";
-    acc[agegroup] = (acc[agegroup] || 0) + 1;
-    return acc;
-  }, {});
-  const total = participants.length;
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-  const [label, count] = sorted[0] || ["N/A", 0];
-  return { label, count, percent: ((count / total) * 100).toFixed(1) };
-}
 
 export default function AttendeesDetails() {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const participants = event?.participants || [];
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -53,6 +31,10 @@ export default function AttendeesDetails() {
         const res = await fetch(`http://localhost:5000/api/events/${id}`);
         if (!res.ok) throw new Error("Failed to fetch event");
         const data = await res.json();
+
+        console.log("Fetched event data:", data); // 👈 Add this
+
+
         data.participants = Array.isArray(data.participants) ? data.participants : [];
         setEvent(data);
       } catch (err) {
@@ -70,23 +52,40 @@ export default function AttendeesDetails() {
 
   const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#8dd1e1", "#a4de6c"];
 
-  // Age groups
-  const ageGroups = [
-    { label: "18–24", color: "#47B0EB", min: 18, max: 24 },
-    { label: "25–34", color: "#FFDC61", min: 25, max: 34 },
-    { label: "35–44", color: "#E5584D", min: 35, max: 44 },
-    { label: "45+", color: "#0C9666", min: 45, max: Infinity },
-  ];
+const ageGroups = [
+  { label: "18-24", color: "#47B0EB" },
+  { label: "25-34", color: "#FFDC61" },
+  { label: "35-44", color: "#E5584D" },
+  { label: "45+", color: "#0C9666" },
+];
 
-  const ageGroupCounts = ageGroups.map(group => ({
+const groupedByAge = {
+  "0-17": 0,
+  "18-24": 0,
+  "25-34": 0,
+  "35-44": 0,
+  "45-54": 0,
+  "55+": 0,
+};
+
+
+participants.forEach(p => {
+  if (p.agegroup && groupedByAge.hasOwnProperty(p.agegroup)) {
+    groupedByAge[p.agegroup]++;
+  }
+});
+
+const ageGroupCounts = ageGroups.map(group => {
+  const count = event.participants.filter(
+    p => p.agegroup === group.label
+  ).length;
+
+  return {
     label: group.label,
-    count: event.participants.filter(p => p.age >= group.min && p.age <= group.max).length,
-    color: group.color
-  }));
-
-  const ageData = getAgeData(event.participants);
-  const topAgeGroup = getTopAgeGroup(event.participants);
-
+    count,
+    color: group.color,
+  };
+});
   // Interests
   const interestCounts = Object.entries(
     event.participants.reduce((acc, p) => {
@@ -94,6 +93,8 @@ export default function AttendeesDetails() {
       return acc;
     }, {})
   ).map(([name, value]) => ({ name, value }));
+
+  console.log("Sample participant:", event.participants[0]);
 
   // Countries
   const countryCounts = event.participants.reduce((acc, p) => {

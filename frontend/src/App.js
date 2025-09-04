@@ -9,7 +9,7 @@ import EventDetails from "./pages/EventDetails"
 import EditEvent from "./pages/EditEvent"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
-import ManageUsers from "./pages/ManageUsers"
+import ManageUsers from "./pages/manageusers"
 
 export default function App() {
   return (

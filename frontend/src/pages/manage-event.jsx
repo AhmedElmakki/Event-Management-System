@@ -38,14 +38,6 @@ useEffect(() => {
             <div className="header-top">
               <h1 className="manager-h1">Event Management Section</h1>
               <div className="manage-filter">
-                <div className="filter-menu">
-                  <select>
-                    <option value="">Filter by...</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="past">Past</option>
-                    <option value="popular">Most Popular</option>
-                  </select>
-                </div>
                 <div className="searcharea2">
                   <button className="search-button" title="Search">
                     <img src={searchIcon} alt="search" />
@@ -74,15 +66,6 @@ useEffect(() => {
                 </div>
               )}
 
-              <div className="actions-right">
-                <select className="sort-select">
-                  <option value="">Sort by Status</option>
-                  <option value="upcoming">Upcoming Events</option>
-                  <option value="pending">Pending Events</option>
-                  <option value="closed">Closed Events</option>
-                </select>
-                <input type="date" className="date-filter" />
-              </div>
             </div>
           </header>
 
@@ -104,38 +87,36 @@ useEffect(() => {
               {events
                 .filter(e => e.status === "upcoming" || !e.status)
                 .map(event => (
-                  <div key={event._id} className="event-card">
-                    <h2>{event.name}</h2>
-                    <p>{event.date ? new Date(event.date).toLocaleDateString() : "No date set"} </p>
-                    <p>{event.venue}</p>
-                    <p>Status: {event.status || "upcoming"}</p>
-                    
-                    <button
-                      className="btn-view"
-                      onClick={() => navigate(`/EventDetails/${event._id}`)}
-                      style={{
-                        position: "absolute",
-                        bottom: "10px",
-                        right: "10px",
-                      }}
-                    >
-                    Details
-                    </button>
-                  </div>
-                ))}
-            </div>
+                <div key={event._id} className="event-card" style={{height: "200px"}}>
+                  {/* Event Name */}
+                  <h2 style={{ textAlign: "center", marginBottom: "10px" }}>
+                    {event.name}
+                  </h2>
 
-            {/* Pending Events Column */}
-            <div className="event-column">
-              {events
-                .filter(e => e.status === "pending")
-                .map(event => (
-                  <div key={event._id} className="event-card">
-                    <h2>{event.name}</h2>
-                    <p>{event.date ? new Date(event.date).toLocaleDateString() : "No date set"} </p>
-                    <p>{event.venue}</p>
-                    <p>Status: {event.status}</p>
-                    <button
+                  {/* Ticket Info */}
+                <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "5px",
+                    gap: "10px",
+                    fontSize: "0.85rem", // smaller text
+                  }}>
+                    <p>💲{event.ticketPrice ? `${event.ticketPrice}` : "Free"}</p>
+                    <p>🪑{event.seatAmount || "N/A"}</p>
+                    <p>🪑Attendees:{event.participants ? event.participants.length : 0} </p>
+                  </div>
+
+                  <hr style={{ border: "0.5px solid #ccc", margin: "8px 0" }} />
+
+                  {/* Venue, Date, and Time */}
+                  <div style={{ marginBottom: "10px" }}>
+                    <p>📍 Venue: {event.venue || "TBA"}</p>
+                    <p>📅 Date: {event.date ? new Date(event.date).toLocaleDateString() : "No date set"}</p>
+                    <p>⏰ Time: {event.time || "TBA"}</p>
+                  </div>
+
+                  {/* Button (kept intact) */}
+                  <button
                     className="btn-view"
                     onClick={() => navigate(`/EventDetails/${event._id}`)}
                     style={{
@@ -144,9 +125,58 @@ useEffect(() => {
                       right: "10px",
                     }}
                   >
-                  Details
+                    Details
                   </button>
+                </div>
+                ))}
+            </div>
+
+            {/* Pending Events Column */}
+            <div className="event-column">
+              {events
+                .filter(e => e.status === "pending")
+                .map(event => (
+                  <div key={event._id} className="event-card" style={{height: "200px"}}>
+                  {/* Event Name */}
+                  <h2 style={{ textAlign: "center", marginBottom: "10px" }}>
+                    {event.name}
+                  </h2>
+
+                  {/* Ticket Info */}
+                <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "5px",
+                    gap: "10px",
+                    fontSize: "0.85rem", // smaller text
+                  }}>
+                    <p>💲{event.ticketPrice ? `${event.ticketPrice}` : "Free"}</p>
+                    <p>🪑{event.seatAmount || "N/A"}</p>
+                    <p>🪑Attendees:{event.participants ? event.participants.length : 0} </p>
                   </div>
+
+                  <hr style={{ border: "0.5px solid #ccc", margin: "8px 0" }} />
+
+                  {/* Venue, Date, and Time */}
+                  <div style={{ marginBottom: "10px" }}>
+                    <p>📍 Venue: {event.venue || "TBA"}</p>
+                    <p>📅 Date: {event.date ? new Date(event.date).toLocaleDateString() : "No date set"}</p>
+                    <p>⏰ Time: {event.time || "TBA"}</p>
+                  </div>
+
+                  {/* Button (kept intact) */}
+                  <button
+                    className="btn-view"
+                    onClick={() => navigate(`/EventDetails/${event._id}`)}
+                    style={{
+                      position: "absolute",
+                      bottom: "10px",
+                      right: "10px",
+                    }}
+                  >
+                    Details
+                  </button>
+                </div>
                 ))}
             </div>
 
@@ -155,12 +185,47 @@ useEffect(() => {
               {events
                 .filter(e => e.status === "closed")
                 .map(event => (
-                  <div key={event._id} className="event-card" >
-                    <h2>{event.name}</h2>
-                    <p>{event.date ? new Date(event.date).toLocaleDateString() : "No date set"} </p>
-                    <p>{event.venue}</p>
-                    <p>Status: {event.status}</p>
+                  <div key={event._id} className="event-card" style={{height: "200px"}}>
+                  {/* Event Name */}
+                  <h2 style={{ textAlign: "center", marginBottom: "10px" }}>
+                    {event.name}
+                  </h2>
+
+                  {/* Ticket Info */}
+                <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "5px",
+                    gap: "10px",
+                    fontSize: "0.85rem", // smaller text
+                  }}>
+                    <p>💲{event.ticketPrice ? `${event.ticketPrice}` : "Free"}</p>
+                    <p>🪑{event.seatAmount || "N/A"}</p>
+                    <p>🪑Attendees:{event.participants ? event.participants.length : 0} </p>
                   </div>
+
+                  <hr style={{ border: "0.5px solid #ccc", margin: "8px 0" }} />
+
+                  {/* Venue, Date, and Time */}
+                  <div style={{ marginBottom: "10px" }}>
+                    <p>📍 Venue: {event.venue || "TBA"}</p>
+                    <p>📅 Date: {event.date ? new Date(event.date).toLocaleDateString() : "No date set"}</p>
+                    <p>⏰ Time: {event.time || "TBA"}</p>
+                  </div>
+
+                  {/* Button (kept intact) */}
+                  <button
+                    className="btn-view"
+                    onClick={() => navigate(`/EventDetails/${event._id}`)}
+                    style={{
+                      position: "absolute",
+                      bottom: "10px",
+                      right: "10px",
+                    }}
+                  >
+                    Details
+                  </button>
+                </div>
                 ))}
             </div>
           </div>

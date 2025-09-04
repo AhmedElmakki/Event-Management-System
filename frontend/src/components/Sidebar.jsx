@@ -140,7 +140,7 @@ function logout() {
           }}
         >
   {role === "admin" && (
-    <div className="menu-item" onClick={() => navigate("/ManageUsers")}>
+    <div className="menu-item" onClick={() => navigate("/manageusers")}>
       👤 Manage Users
     </div>
   )}
