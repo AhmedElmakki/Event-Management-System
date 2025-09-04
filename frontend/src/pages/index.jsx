@@ -123,16 +123,24 @@ export default function Index() {
               {/* Top stats */}
               <section className="dashboard-top-stats">
                 <div className="dashboard-stat-box" onClick={() => (window.location.href = "manage-event")}>
-                  Events: {events.length}
+                  <div><h2 style={{color:"blue"}}>Events:</h2> </div>
+                  <div><h1 style={{color:"blue"}}>{events.length}</h1></div>
                 </div>
-                <div className="dashboard-stat-box">Bookings: {totalParticipants}</div>
-                <div className="dashboard-stat-box">Revenue: ${totalRevenue.toLocaleString()}</div>
+                <div className="dashboard-stat-box">
+                 <div> <h2 style={{color:"brown"}}>Bookings:</h2> </div> 
+                 <div><h1 style={{color:"brown"}}>{totalParticipants}</h1></div>
+                  </div>
+                <div className="dashboard-stat-box">
+                  <div> <h2 style={{color:"green"}}>Revenue:</h2> </div> 
+                  <div><h1 style={{color:"green"}}>${totalRevenue.toLocaleString()}</h1></div></div>
+                  
+                  
               </section>
 
               {/* Charts */}
               <section className="dashboard-charts">
                 {/* Ticket Sales Bar Chart */}
-                <div className="dashboard-card dashboard-net-sales" style={{ height: "400px", padding: "10px" }}>
+                <div className="dashboard-card dashboard-net-sales" style={{ height: "600px", padding: "10px" }}>
                   <h3 style={{ textAlign: "center" }}>Event Ticket Sales</h3>
                   {top5RevenueData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="85%">
@@ -161,10 +169,10 @@ export default function Index() {
                 </div>
 
                 {/* Top 5 Events Pie Chart */}
-                <div className="dashboard-card dashboard-engagement" style={{ height: "400px", padding: "10px" }}>
+                <div className="dashboard-card dashboard-engagement" style={{ height: "600px", padding: "10px" }}>
                   <h3 style={{ textAlign: "center" }}>Top 5 Events by Attendees</h3>
                   {top5Events.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="85%">
+                    <ResponsiveContainer width="100%" height="75%">
                       <PieChart>
                         <Pie
                           data={top5Events.map(e => ({ name: e.name, value: e.participants.length }))}
@@ -189,10 +197,6 @@ export default function Index() {
                 </div>
               </section>
 
-              {/* Bottom row */}
-              <section className="dashboard-latest">
-                <div className="dashboard-card dashboard-latest-event">Latest Event</div>
-              </section>
             </main>
 
             {/* Right Sidebar */}

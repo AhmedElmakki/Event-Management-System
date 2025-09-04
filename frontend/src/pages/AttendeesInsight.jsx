@@ -244,7 +244,7 @@ const allParticipants = (() => {
   style={{ flex: 1, minHeight: 300, display: "flex", justifyContent: "center", alignItems: "center" }}
 >
   {events.filter(e => (e.participants?.length || 0) > 0).length > 0 && (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="80%">
       <PieChart>
         {(() => {
           // Filter events with participants >0, sort by participants, take top 5
@@ -289,7 +289,7 @@ const allParticipants = (() => {
                     style={{ flex: 1, minHeight: 300, display: "flex", justifyContent: "center", alignItems: "center" }}
                   >
                     {ageData.length > 0 && (
-                      <ResponsiveContainer width="100%" height="100%">
+                      <ResponsiveContainer width="100%" height="80%">
                         <PieChart>
                           <Pie
                             data={ageData}
