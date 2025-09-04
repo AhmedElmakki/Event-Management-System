@@ -10,6 +10,7 @@ import EditEvent from "./pages/EditEvent"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import ManageUsers from "./pages/manageusers"
+import BookingTickets from "./pages/bookingtickets"
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/" element={<PrivateRoute><Index/></PrivateRoute>} />
         <Route path="/manage-event" element={<PrivateRoute><ManageEvent /></PrivateRoute>} />
         <Route path="/AttendeesInsight" element={<PrivateRoute><AttendeesInsight /></PrivateRoute>} />
+        <Route path="/bookingtickets" element={<PrivateRoute><BookingTickets /></PrivateRoute>} />
         <Route path="/ManageUsers" element={<PrivateRoute><ManageUsers /></PrivateRoute>} />
         <Route path="/AttendeesDetails/:id" element={<PrivateRoute><AttendeesDetails /></PrivateRoute>} />
         <Route path="/AddEvent" element={<PrivateRoute><AddEvent /></PrivateRoute>} />

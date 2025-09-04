@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import {
   BarChart,
@@ -10,7 +11,7 @@ import {
   Cell,
   Tooltip,
   ResponsiveContainer,
-  Legend
+  Legend,
 } from "recharts";
 
 // icons
@@ -20,10 +21,12 @@ import search from "../materials/search icon.svg";
 
 export default function Index() {
   const [user, setUser] = useState({ username: "", role: "" });
-  const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const role = localStorage.getItem("role"); // "admin" or "user"
+
+  // ✅ Always call hooks — never conditionally
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
@@ -33,21 +36,15 @@ export default function Index() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const usersRes = await fetch("http://localhost:5000/api/users");
-        if (!usersRes.ok) throw new Error("Failed to fetch users");
-        const usersData = await usersRes.json();
-
         const eventsRes = await fetch("http://localhost:5000/api/events");
         if (!eventsRes.ok) throw new Error("Failed to fetch events");
         const eventsData = await eventsRes.json();
 
-        // Normalize participants
-        const normalizedEvents = eventsData.map(e => ({
+        const normalizedEvents = eventsData.map((e) => ({
           ...e,
           participants: Array.isArray(e.participants) ? e.participants : [],
         }));
 
-        setUsers(usersData);
         setEvents(normalizedEvents);
       } catch (err) {
         console.error(err);
@@ -59,8 +56,23 @@ export default function Index() {
     fetchData();
   }, []);
 
-  const totalParticipants = events.reduce((acc, e) => acc + e.participants.length, 0);
-  const totalRevenue = events.reduce((acc, e) => acc + (e.ticketPrice || 0) * e.participants.length, 0);
+  // ✅ Redirect handled after hooks
+  if (role !== "admin") {
+    return <Navigate to="/bookingtickets" replace />;
+  }
+
+  if (loading) {
+    return <p style={{ textAlign: "center" }}>Loading dashboard...</p>;
+  }
+
+  const totalParticipants = events.reduce(
+    (acc, e) => acc + e.participants.length,
+    0
+  );
+  const totalRevenue = events.reduce(
+    (acc, e) => acc + (e.ticketPrice || 0) * e.participants.length,
+    0
+  );
 
   const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#8dd1e1"];
 
@@ -69,14 +81,13 @@ export default function Index() {
     .sort((a, b) => b.participants.length - a.participants.length)
     .slice(0, 5);
 
-  // Prepare data for bar chart
-  const top5RevenueData = top5Events.map(e => ({
+  // Data for bar chart
+  const top5RevenueData = top5Events.map((e) => ({
     name: e.name,
     ticketsSold: e.participants.length,
-    revenue: (e.ticketPrice || 0) * e.participants.length
+    revenue: (e.ticketPrice || 0) * e.participants.length,
   }));
 
-  if (loading) return <p style={{ textAlign: "center" }}>Loading dashboard...</p>;
 
   return (
     <div className="global-body">

@@ -73,16 +73,19 @@ function logout() {
           <a onClick={() => navigate("/")} className="menu-item">
             📊 Dashboard
           </a>
+
+          {role === "admin" && (
           <a onClick={() => navigate("/manage-event")} className="menu-item">
             📅 Manage Events
           </a>
-          <a className="menu-item">🎟️ Booking & Tickets</a>
+          )}
+          <a onClick={() => navigate("/bookingtickets")} className="menu-item">🎟️ Booking & Tickets</a>
           {role === "admin" && (
           <a onClick={() => navigate("/AttendeesInsight")} className="menu-item">
             👥 Attendee Insights
           </a>
            )}
-          <div className="menu-item">📈 Analytics & Reports</div>
+
         </div>
 
         {/* Support & Management */}
@@ -139,6 +142,7 @@ function logout() {
             maxHeight: activeSections["Account Management"] ? "500px" : "0",
           }}
         >
+          
   {role === "admin" && (
     <div className="menu-item" onClick={() => navigate("/manageusers")}>
       👤 Manage Users
