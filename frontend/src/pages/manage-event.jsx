@@ -9,22 +9,22 @@ export default function ManageEvent() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/events");
-        if (!res.ok) throw new Error("Failed to fetch events");
-        const data = await res.json();
-        setEvents(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const fetchEvents = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/events");
+      if (!res.ok) throw new Error("Failed to fetch events");
+      const data = await res.json();
+      setEvents(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchEvents();
+}, []);
 
-    fetchEvents();
-  }, []);
 
   if (loading) return <p style={{ textAlign: "center" }}>Loading events...</p>;
 
@@ -99,23 +99,70 @@ export default function ManageEvent() {
           </div>
 
           <div className="grid-holder">
-            {events.length === 0 ? (
-              <p>No events available</p>
-            ) : (
-              events.map((event) => (
-                <div key={event._id}>
-                  <div
-                    className="event-card"
-                    onClick={() => navigate(`/EventDetails/${event._id}`)}
-                  >
+            {/* Upcoming Events Column */}
+            <div className="event-column">
+              {events
+                .filter(e => e.status === "upcoming" || !e.status)
+                .map(event => (
+                  <div key={event._id} className="event-card">
                     <h2>{event.name}</h2>
-                    <p>{new Date(event.date).toLocaleDateString()}</p>
+                    <p>{event.date ? new Date(event.date).toLocaleDateString() : "No date set"} </p>
                     <p>{event.venue}</p>
                     <p>Status: {event.status || "upcoming"}</p>
+                    
+                    <button
+                      className="btn-view"
+                      onClick={() => navigate(`/EventDetails/${event._id}`)}
+                      style={{
+                        position: "absolute",
+                        bottom: "10px",
+                        right: "10px",
+                      }}
+                    >
+                    Details
+                    </button>
                   </div>
-                </div>
-              ))
-            )}
+                ))}
+            </div>
+
+            {/* Pending Events Column */}
+            <div className="event-column">
+              {events
+                .filter(e => e.status === "pending")
+                .map(event => (
+                  <div key={event._id} className="event-card">
+                    <h2>{event.name}</h2>
+                    <p>{event.date ? new Date(event.date).toLocaleDateString() : "No date set"} </p>
+                    <p>{event.venue}</p>
+                    <p>Status: {event.status}</p>
+                    <button
+                    className="btn-view"
+                    onClick={() => navigate(`/EventDetails/${event._id}`)}
+                    style={{
+                      position: "absolute",
+                      bottom: "10px",
+                      right: "10px",
+                    }}
+                  >
+                  Details
+                  </button>
+                  </div>
+                ))}
+            </div>
+
+            {/* Closed Events Column */}
+            <div className="event-column">
+              {events
+                .filter(e => e.status === "closed")
+                .map(event => (
+                  <div key={event._id} className="event-card" >
+                    <h2>{event.name}</h2>
+                    <p>{event.date ? new Date(event.date).toLocaleDateString() : "No date set"} </p>
+                    <p>{event.venue}</p>
+                    <p>Status: {event.status}</p>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>

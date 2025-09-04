@@ -3,10 +3,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
-
 export default function EditEvent() {
-
-    const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     date: "",
     venue: "",
@@ -18,21 +16,17 @@ export default function EditEvent() {
     tags: "",
   });
 
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const role = localStorage.getItem("role");
 
-    const { id } = useParams(); 
-    const navigate = useNavigate();
-    const role = localStorage.getItem("role");
-
-
-    useEffect(() => {
+  useEffect(() => {
     if (role !== "admin") {
       navigate(`/EventDetails/${id}`);
     }
-    }, [role, navigate, id]);
+  }, [role, navigate, id]);
 
-
-
-    useEffect(() => {
+  useEffect(() => {
     const fetchEvent = async () => {
       try {
         const res = await fetch(`http://localhost:5000/api/events/${id}`);
@@ -41,7 +35,7 @@ export default function EditEvent() {
 
         setFormData({
           name: event.name || "",
-          date: event.date ? event.date.split("T")[0] : "", // format YYYY-MM-DD
+          date: event.date ? event.date.split("T")[0] : "",
           venue: event.venue || "",
           time: event.time || "",
           description: event.description || "",
@@ -58,48 +52,45 @@ export default function EditEvent() {
     fetchEvent();
   }, [id]);
 
-  // ✅ handle form input changes
+  // ✅ universal input handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ handle save (PUT request)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(`http://localhost:5000/api/events/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           ...formData,
+          ticketPrice: formData.ticketPrice ? Number(formData.ticketPrice) : null,
+          seatAmount: formData.seatAmount ? Number(formData.seatAmount) : null,
           tags: formData.tags.split(",").map((tag) => tag.trim()),
         }),
       });
 
       if (!res.ok) throw new Error("Failed to update event");
 
-      navigate(`/EventDetails/${id}`); // redirect back to details page
+      navigate(`/EventDetails/${id}`);
     } catch (err) {
       console.error(err);
     }
   };
 
-
   return (
     <div className="global-body">
       <div className="board">
         <Sidebar />
-
         <div className="main-content">
-          <h1
-            style={{
-              textAlign: "center",
-              marginBottom: "30px",
-              color: "#333",
-            }}
-          >
+          <h1 style={{ textAlign: "center", marginBottom: "30px", color: "#333" }}>
             Edit Event
           </h1>
 
@@ -113,7 +104,7 @@ export default function EditEvent() {
                   name="name"
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -123,7 +114,7 @@ export default function EditEvent() {
                   name="date"
                   id="date"
                   value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -137,7 +128,7 @@ export default function EditEvent() {
                   name="venue"
                   id="venue"
                   value={formData.venue}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -147,7 +138,7 @@ export default function EditEvent() {
                   name="time"
                   id="time"
                   value={formData.time}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -161,7 +152,7 @@ export default function EditEvent() {
                   name="description"
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -175,7 +166,7 @@ export default function EditEvent() {
                   name="ticketPrice"
                   id="ticketPrice"
                   value={formData.ticketPrice}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -186,7 +177,7 @@ export default function EditEvent() {
                   name="seatAmount"
                   id="seatAmount"
                   value={formData.seatAmount}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -197,7 +188,7 @@ export default function EditEvent() {
                   name="availableSeats"
                   id="availableSeats"
                   value={formData.availableSeats}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -208,7 +199,7 @@ export default function EditEvent() {
                   name="tags"
                   id="tags"
                   value={formData.tags}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                   placeholder="Comma separated tags"
                 />
               </div>

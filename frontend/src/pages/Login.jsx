@@ -36,12 +36,15 @@ export default function Login() {
 
     if (!res.ok) {
       alert(data.message); // show error from backend
+      
       return;
     }
 
     // Save role or token for frontend usage
-    localStorage.setItem("role", data.user.role);
+    localStorage.setItem("user", JSON.stringify(data.user)); // ✅ add this
     localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.user.role);
+    localStorage.setItem("userId", data.user._id); // ✅ use _id from backend
 
      
 

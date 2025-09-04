@@ -1,29 +1,96 @@
-import Sidebar from "../components/Sidebar"; 
+import { useState, useEffect } from "react";
+import Sidebar from "../components/Sidebar";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend
+} from "recharts";
 
-// icons (importing them ensures bundling works in React)
+// icons
 import bellIcon from "../materials/bell.svg";
 import calendarIcon from "../materials/calender.svg";
 import search from "../materials/search icon.svg";
 
+export default function Index() {
+  const [user, setUser] = useState({ username: "", role: "" });
+  const [users, setUsers] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) setUser(JSON.parse(storedUser));
+  }, []);
 
-export default function index() {
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const usersRes = await fetch("http://localhost:5000/api/users");
+        if (!usersRes.ok) throw new Error("Failed to fetch users");
+        const usersData = await usersRes.json();
+
+        const eventsRes = await fetch("http://localhost:5000/api/events");
+        if (!eventsRes.ok) throw new Error("Failed to fetch events");
+        const eventsData = await eventsRes.json();
+
+        // Normalize participants
+        const normalizedEvents = eventsData.map(e => ({
+          ...e,
+          participants: Array.isArray(e.participants) ? e.participants : [],
+        }));
+
+        setUsers(usersData);
+        setEvents(normalizedEvents);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const totalParticipants = events.reduce((acc, e) => acc + e.participants.length, 0);
+  const totalRevenue = events.reduce((acc, e) => acc + (e.ticketPrice || 0) * e.participants.length, 0);
+
+  const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#8dd1e1"];
+
+  // Top 5 events by attendees
+  const top5Events = [...events]
+    .sort((a, b) => b.participants.length - a.participants.length)
+    .slice(0, 5);
+
+  // Prepare data for bar chart
+  const top5RevenueData = top5Events.map(e => ({
+    name: e.name,
+    ticketsSold: e.participants.length,
+    revenue: (e.ticketPrice || 0) * e.participants.length
+  }));
+
+  if (loading) return <p style={{ textAlign: "center" }}>Loading dashboard...</p>;
+
   return (
-    <div className="global-body" >
+    <div className="global-body">
       <div className="board">
-        {/* Sidebar */}
         <Sidebar />
 
         <div className="main-content">
-          {/* Top search/user bar */}
+          {/* Top bar */}
           <div className="search">
             <div className="pfp"></div>
-
             <div className="userinfo">
-              <div className="welcome">Welcome **user**</div>
-              <div className="role">**my role**</div>
+              <div className="welcome">Welcome {user.username}</div>
+              <div className="role">{user.role}</div>
             </div>
-
             <div className="utility">
               <div className="searcharea">
                 <button className="search-button" title="Search">
@@ -38,53 +105,99 @@ export default function index() {
                 <img src={calendarIcon} alt="calendar" />
               </button>
             </div>
-          </div>  
+          </div>
 
-          {/* Dashboard layout */}
           <div className="dashboard">
-            {/* Main content */}
             <main className="dashboard-main">
-              {/* Top stats row */}
+              {/* Top stats */}
               <section className="dashboard-top-stats">
-                <div 
-                  className="dashboard-stat-box" 
-                  onClick={() => (window.location.href = "manage-event")}
-                >
-                  Events
+                <div className="dashboard-stat-box" onClick={() => (window.location.href = "manage-event")}>
+                  Events: {events.length}
                 </div>
-                <div className="dashboard-stat-box">Bookings</div>
-                <div className="dashboard-stat-box">Revenue</div>
+                <div className="dashboard-stat-box">Bookings: {totalParticipants}</div>
+                <div className="dashboard-stat-box">Revenue: ${totalRevenue.toLocaleString()}</div>
               </section>
 
-              {/* Middle row */}
+              {/* Charts */}
               <section className="dashboard-charts">
-                <div className="dashboard-card dashboard-net-sales" style={{ height: "200px" }}>
-                  Net Sales Chart
+                {/* Ticket Sales Bar Chart */}
+                <div className="dashboard-card dashboard-net-sales" style={{ height: "400px", padding: "10px" }}>
+                  <h3 style={{ textAlign: "center" }}>Event Ticket Sales</h3>
+                  {top5RevenueData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="85%">
+                      <BarChart data={top5RevenueData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+                        <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} angle={-30} textAnchor="end" />
+                        <YAxis />
+                        <Tooltip formatter={(value, name) => [
+                          value,
+                          name === "ticketsSold" ? "Tickets Sold" : "Revenue ($)"
+                        ]} />
+                        <Bar dataKey="ticketsSold" radius={[5, 5, 0, 0]}>
+                          {top5RevenueData.map((entry, index) => (
+                            <Cell key={`cell-tickets-${index}`} fill={colors[index % colors.length]} />
+                          ))}
+                        </Bar>
+                        <Bar dataKey="revenue" radius={[5, 5, 0, 0]}>
+                          {top5RevenueData.map((entry, index) => (
+                            <Cell key={`cell-revenue-${index}`} fill={colors[(index + 1) % colors.length]} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <p style={{ textAlign: "center", marginTop: "50px" }}>No data available</p>
+                  )}
                 </div>
-                <div className="dashboard-card dashboard-engagement" style={{ height: "200px" }}>
-                  Customer Engagement
+
+                {/* Top 5 Events Pie Chart */}
+                <div className="dashboard-card dashboard-engagement" style={{ height: "400px", padding: "10px" }}>
+                  <h3 style={{ textAlign: "center" }}>Top 5 Events by Attendees</h3>
+                  {top5Events.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="85%">
+                      <PieChart>
+                        <Pie
+                          data={top5Events.map(e => ({ name: e.name, value: e.participants.length }))}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius="80%"
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {top5Events.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={v => `${v} attendees`} />
+                        <Legend verticalAlign="bottom" height={36} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div style={{ textAlign: "center", marginTop: "50px" }}>No data available</div>
+                  )}
                 </div>
               </section>
 
               {/* Bottom row */}
               <section className="dashboard-latest">
-                <div className="dashboard-card dashboard-latest-event">
-                  Latest Event
-                </div>
+                <div className="dashboard-card dashboard-latest-event">Latest Event</div>
               </section>
             </main>
 
-            {/* Sidebar on the right */}
-            <aside className="dashboard-sidebar">
-              <div 
-                className="dashboard-card dashboard-upcoming-events" 
-                onClick={() => (window.location.href = "manage-event")}
-              >
-                Upcoming Events
+            {/* Right Sidebar */}
+            <aside className="dashboard-sidebar"  style={{ flex: 1 }} >
+              <div className="dashboard-card dashboard-upcoming-events">
+                <h3>Upcoming Events</h3>
+                {events.filter(e => e.status === "upcoming" || !e.status).map(event => (
+                  <div key={event._id} className="upcoming-event-card">
+                    <strong>{event.name}</strong>
+                    <p>{event.date ? new Date(event.date).toLocaleDateString() : "No date set"}</p>
+                    <p>{event.venue}</p>
+                  </div>
+                ))}
+                {events.filter(e => e.status === "upcoming" || !e.status).length === 0 && <p>No upcoming events</p>}
               </div>
-              <div className="dashboard-card dashboard-notifications">
-                Notifications
-              </div>
+              <div className="dashboard-card dashboard-notifications">Notifications</div>
             </aside>
           </div>
         </div>

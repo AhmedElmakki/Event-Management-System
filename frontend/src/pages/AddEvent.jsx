@@ -1,9 +1,13 @@
-// src/pages/AddEvent.jsx
-import { useState } from "react";
+// src/pages/EditEvent.jsx
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
+export default function EditEvent() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const role = localStorage.getItem("role");
 
-export default function AddEvent() {
   const [formData, setFormData] = useState({
     name: "",
     date: "",
@@ -19,69 +23,80 @@ export default function AddEvent() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Redirect non-admins
+  useEffect(() => {
+    if (role !== "admin") {
+      navigate(`/EventDetails/${id}`);
+    }
+  }, [role, navigate, id]);
+
+  // Fetch event data
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/events/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch event");
+        const event = await res.json();
+
+        setFormData({
+          name: event.name || "",
+          date: event.date ? event.date.split("T")[0] : "",
+          time: event.time || "",
+          venue: event.venue || "",
+          description: event.description || "",
+          ticketPrice: event.ticketPrice || "",
+          seatAmount: event.seatAmount || "",
+          availableSeats: event.availableSeats || "",
+          tags: event.tags ? event.tags.join(", ") : "",
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
+
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:5000/api/events/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          ticketPrice: formData.ticketPrice ? Number(formData.ticketPrice) : null,
+          seatAmount: formData.seatAmount ? Number(formData.seatAmount) : null,
+          tags: formData.tags.split(",").map((tag) => tag.trim()),
+        }),
+      });
 
-  try {
-    const token = localStorage.getItem("token"); // ✅ get token stored at login
-    const response = await fetch("http://localhost:5000/api/events", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-       },
-      body: JSON.stringify({
-        name: formData.name,
-        date: formData.date,
-        time: formData.time,
-        venue: formData.venue,
-        description: formData.description,
-        ticketPrice: formData.ticketPrice ? Number(formData.ticketPrice) : null,
-        seatAmount: formData.seatAmount ? Number(formData.seatAmount) : null,
-        tags: formData.tags
-          ? formData.tags.split(",").map((t) => t.trim())
-          : [],
-      }),
-    });
+      if (!res.ok) throw new Error("Failed to update event");
 
-    if (!response.ok) throw new Error("Failed to create event");
-
-    const data = await response.json();
-    setSuccess("Event created successfully!");
-    setError("");
-    console.log(data);
-
-    // Reset form
-    setFormData({
-      name: "",
-      date: "",
-      time: "",
-      venue: "",
-      description: "",
-      ticketPrice: "",
-      seatAmount: "",
-      tags: "",
-    });
-  } catch (err) {
-    console.error(err);
-    setError(err.message);
-    setSuccess("");
-  }
-};
+      setSuccess("Event updated successfully!");
+      setError("");
+      navigate(`/EventDetails/${id}`);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+      setSuccess("");
+    }
+  };
 
   return (
-    <div className="global-body" >
+    <div className="global-body">
       <div className="board">
         <Sidebar />
-
         <div className="main-content">
           <h1 style={{ textAlign: "center", marginBottom: "30px", color: "#333" }}>
-            Add Event
+            Edit Event
           </h1>
 
           <form className="event-details-form" onSubmit={handleSubmit}>
@@ -93,10 +108,8 @@ export default function AddEvent() {
                   type="text"
                   name="name"
                   id="name"
-                  placeholder="Enter event name"
                   value={formData.name}
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div>
@@ -107,7 +120,6 @@ export default function AddEvent() {
                   id="date"
                   value={formData.date}
                   onChange={handleChange}
-                  required
                 />
               </div>
             </div>
@@ -120,7 +132,6 @@ export default function AddEvent() {
                   type="text"
                   name="venue"
                   id="venue"
-                  placeholder="Enter venue"
                   value={formData.venue}
                   onChange={handleChange}
                 />
@@ -145,7 +156,6 @@ export default function AddEvent() {
                   type="text"
                   name="description"
                   id="description"
-                  placeholder="Enter event description"
                   value={formData.description}
                   onChange={handleChange}
                 />
@@ -166,13 +176,24 @@ export default function AddEvent() {
               </div>
 
               <div>
+                <label htmlFor="seatAmount">Seat Amount:</label>
+                <input
+                  type="number"
+                  name="seatAmount"
+                  id="seatAmount"
+                  value={formData.seatAmount}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
                 <label htmlFor="availableSeats">Available Seats:</label>
                 <input
                   type="number"
                   name="availableSeats"
                   id="availableSeats"
                   value={formData.availableSeats}
-                  onChange={handleChange}
+                  readOnly
                 />
               </div>
 
@@ -182,22 +203,22 @@ export default function AddEvent() {
                   type="text"
                   name="tags"
                   id="tags"
-                  placeholder="Comma separated tags"
                   value={formData.tags}
                   onChange={handleChange}
+                  placeholder="Comma separated tags"
                 />
               </div>
             </div>
 
-            {/* Section 5: Buttons */}
+            {/* Section 5 */}
             <div className="form-actions">
               <button type="submit" className="btn-save">
-                Add Event
+                Save
               </button>
               <button
                 type="button"
                 className="btn-cancel"
-                onClick={() => (window.location.href = "/")}
+                onClick={() => navigate(`/EventDetails/${id}`)}
               >
                 Cancel
               </button>

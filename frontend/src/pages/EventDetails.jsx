@@ -1,17 +1,27 @@
+// frontend/src/pages/EventDetails.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
-
-
 export default function EventDetails() {
-      const { id } = useParams(); // expects route like /EventDetails/:id
-      const navigate = useNavigate();
-      const role = localStorage.getItem("role"); // "admin" or "user"
-      const userId = localStorage.getItem("userId"); // make sure you store this on login
-      const [event, setEvent] = useState(null);
-      const [isJoined, setIsJoined] = useState(false);
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+  const role = localStorage.getItem("role"); 
+  const userId = localStorage.getItem("userId"); 
+  const [event, setEvent] = useState(null);
+  const [isJoined, setIsJoined] = useState(false);
+  const [joinError, setJoinError] = useState("");
 
+  // helper: check if user is in participants
+  const isUserJoined = (participants, userId) => {
+    if (!userId || !participants) return false;
+    return participants.some(p => p?._id?.toString() === userId || p?.toString() === userId);
+  };
+
+  // Compute available seats dynamically
+  const availableSeats = event?.seatAmount != null
+    ? event.seatAmount - (event.participants?.length || 0)
+    : null;
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -20,11 +30,7 @@ export default function EventDetails() {
         if (!res.ok) throw new Error("Failed to fetch event details");
         const data = await res.json();
         setEvent(data);
-
-        // check if user is already in participants
-        if (data.participants?.includes(userId)) {
-          setIsJoined(true);
-        }
+        setIsJoined(isUserJoined(data.participants, userId));
       } catch (err) {
         console.error(err);
       }
@@ -32,29 +38,41 @@ export default function EventDetails() {
     fetchEvent();
   }, [id, userId]);
 
+  console.log("userId:", userId); // debug
+
   const handleJoinToggle = async () => {
+    if (!userId) {
+      setJoinError("User not logged in.");
+      return;
+    }
+    if (!isJoined && availableSeats <= 0) {
+      setJoinError("No seats available.");
+      return;
+    }
+
     try {
+      setJoinError("");
       const res = await fetch(`http://localhost:5000/api/events/${id}/join`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // use token if you protect the route
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ userId }),
       });
 
-      if (!res.ok) throw new Error("Failed to update participation");
-
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update participation");
+
       setEvent(data);
-      setIsJoined(data.participants.includes(userId));
+      setIsJoined(isUserJoined(data.participants, userId));
     } catch (err) {
+      setJoinError(err.message);
       console.error(err);
     }
   };
 
   if (!event) return <p style={{ textAlign: "center" }}>Loading event...</p>;
-
 
   return (
     <div className="global-body">
@@ -66,51 +84,52 @@ export default function EventDetails() {
           </h1>
 
           <form className="event-details-form">
+            {/* Event info fields */}
             <div className="event-details text-group">
               <div>
                 <label>Event Name:</label>
-                <textarea readOnly value={event.name} />
+                <textarea readOnly value={event.name || ""} />
               </div>
               <div>
                 <label>Event Date:</label>
-                <textarea readOnly value={event.date} />
+                <textarea readOnly value={event.date || ""} />
               </div>
             </div>
 
             <div className="event-details text-group">
               <div>
                 <label>Event Venue:</label>
-                <textarea readOnly value={event.venue} />
+                <textarea readOnly value={event.venue || ""} />
               </div>
               <div>
                 <label>Event Time:</label>
-                <textarea readOnly value={event.time} />
+                <textarea readOnly value={event.time || ""} />
               </div>
             </div>
 
             <div className="event-details">
               <div className="event-dis">
                 <label>Event Description:</label>
-                <textarea readOnly value={event.description} />
+                <textarea readOnly value={event.description || ""} />
               </div>
             </div>
 
             <div className="event-details grid-2">
               <div>
                 <label>Ticket Price:</label>
-                <textarea readOnly value={event.ticketPrice} />
+                <textarea readOnly value={event.ticketPrice ?? ""} />
               </div>
               <div>
                 <label>Seat Amount:</label>
-                <textarea readOnly value={event.seatAmount} />
+                <textarea readOnly value={event.seatAmount ?? ""} />
               </div>
               <div>
                 <label>Available Seats:</label>
-                <textarea readOnly value={event.availableSeats} />
+                <textarea readOnly value={availableSeats ?? ""} />
               </div>
               <div>
                 <label>Popularity:</label>
-                <textarea readOnly value={event.popularity} />
+                <textarea readOnly value={event.participants?.length ?? ""} />
               </div>
             </div>
 
@@ -120,27 +139,20 @@ export default function EventDetails() {
                 <div className="event-details two-col">
                   <div>
                     <label>Tags:</label>
-                    <textarea readOnly value={event.tags?.join(", ")} />
+                    <textarea readOnly value={event.tags?.join(", ") || ""} />
                   </div>
                   <div>
                     <label>Expected Attendance:</label>
-                    <textarea readOnly value={event.expectedAttendance} />
+                    <textarea readOnly value={event.expectedAttendance ?? ""} />
                   </div>
                 </div>
 
                 <div className="qr-placeholder">QR code payment area</div>
 
                 <div className="form-actions">
-                  {/* ✅ Join / Opt-out for all users */}
-                  <button
-                    type="button"
-                    className="btn-join"
-                    onClick={handleJoinToggle}
-                  >
-                    {isJoined ? "Opt Out" : "Join Event"}
-                  </button>
+                  
 
-                  {/* ✅ Admin-only buttons */}
+                  {/* Admin-only buttons */}
                   {role === "admin" && (
                     <>
                       <button
@@ -158,8 +170,23 @@ export default function EventDetails() {
                         Attendees insight
                       </button>
                     </>
+
                   )}
+                  
                 </div>
+                <div className="join">
+                {/* ✅ Join / Opt-out button */}
+                  <button
+                    type="button"
+                    className="btn-join"
+                    onClick={handleJoinToggle}
+                    disabled={!isJoined && availableSeats <= 0} // disable if no seats
+                  >
+                    {isJoined ? "Opt Out" : "Join Event"}
+                  </button>
+
+                  {joinError && <p style={{ color: "red" }}>{joinError}</p>}
+                  </div>
               </div>
             </div>
           </form>

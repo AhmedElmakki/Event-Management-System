@@ -65,6 +65,7 @@
   margin: 5px;
 }
 
+
 .main-content .search .userinfo .welcome{
   font-size: 20px;
   
@@ -175,10 +176,15 @@
 
 .dashboard-sidebar {
   display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: 10px;
-}
+  grid-auto-rows: 1fr 1fr;        /* each row fits its content */
+  gap: 10px;                   /* spacing between rows */
+  max-height: 710px;
+ /* limit overall container height */
+  overflow-y: auto;            /* scroll if content exceeds height */
+  box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.4);
+  border: 15px;
 
+}
 
 .dashboard-card,
 .dashboard-stat-box {
@@ -198,12 +204,15 @@
 }
 
 .manager-header {
-  background-color: #fff;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  position: relative;
+  background: #ffffff;
   padding: 20px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-radius: 16px 16px 0 0; /* rounded top corners only */
+  overflow: visible;
+  z-index: 1;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
 }
+
 
 .header-top {
   display: flex;
@@ -262,9 +271,64 @@
   cursor: pointer;
 }
 
+.dashboard-sidebar-insight {
+  display: grid;
+  grid-auto-rows: 1fr 1fr;        /* each row fits its content */
+  gap: 10px;                   /* spacing between rows */
+  max-height: 710px;
+ /* limit overall container height */
+  overflow-y: auto;            /* scroll if content exceeds height */
+  box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.4);
+  border: 15px;
+}
+
+.Engagement {
+  display: grid;
+  gap: 0; /* gap handled by borders */
+}
+
+.Engagement .row {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  border-bottom: 1px solid black; /* line between rows */
+  padding: 15px 0;
+}
+
+.Engagement .row:last-child {
+  border-bottom: none; /* remove border from last row */
+}
+
+.dashboard-Reach, .dashboard-Locations, .dashboard-upcoming-events, .dashboard-notifications {
+  height: 100%; /* or no height at all */
+}
+
+.dashboard-Reach h5,
+.dashboard-Reach h6 {
+  text-align: center;
+}
+
+table {
+  margin: 20px auto; /* center the table horizontally */
+  border-collapse: separate; /* needed for border-radius to work */
+  border-spacing: 0;         /* remove spacing between cells */
+  border: 2px solid black;   /* outer border */
+  border-radius: 10px;       /* rounded corners */
+  overflow: hidden;          /* clip inner cells for border-radius */
+  width: 60%;                /* optional, adjust as needed */
+  text-align: center;        /* center text inside cells */
+}
+
+table th, table td {
+  border: 1px solid black;   /* inner cell borders */
+  padding: 8px 12px;         /* spacing inside cells */
+}
+
+table th {
+  background-color: #f0f0f0; /* optional: header background */
+}
 
 .actions-left {
-  display: flex;
+  display: block;
   gap: 10px;  
 }
 
@@ -354,6 +418,11 @@
 
 }
 
+.event-column {
+  display: flex;
+  flex-direction: column;
+}
+
 .event-card{
   background: white;
   border-radius: 12px;
@@ -361,7 +430,28 @@
   height: 150px;
   padding: 20px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  position: relative; /* Add this */
+
 }
+
+.btn-view {
+  background: #75b91b;
+  color: white;
+  padding: 10px 15px;
+  width: 100px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-view:hover {
+  background: #608133;
+}
+
+
 
 .attendees{
   display: flex;
@@ -396,19 +486,41 @@
 .main-content .event-in{
   display: grid;
   grid-template-columns: 9fr 3fr;
-  gap: 20px;
+  gap: 10px;
   margin-top: 10px;
   height: 600px;
 }
 
-.attendees-main-graph{
+.attendees-main-graph {
   background-color: white;
-  height: 320px;
+  height: 400px;          /* you can adjust as needed */
   border-radius: 15px;
   padding: 20px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* keep chart and legend separated */
 }
 
+.age-legend {
+  display: flex;
+  justify-content: center; /* center the legend */
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.age-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.age-legend-color {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+}
 .attendees-sub-graphs-holder{
   display: grid;
   grid-template-columns: 3fr 3fr;
@@ -649,6 +761,8 @@
   transition: background 0.2s;
 }
 
+
+
 .main-content .form-actions .btn-edit,.btn-save:hover {
   background: #a85e08;
 }
@@ -670,6 +784,33 @@
   background: #144d74;
 }
 
+.main-content .event-details .join{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.main-content .join .btn-join {
+  background: #75b91b;
+  color: white;
+  padding: 10px 15px;
+  width: 150px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.main-content .join .btn-join:hover {
+  background: #608133;
+}
+
+
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -680,4 +821,43 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.action-btn {
+  padding: 5px 10px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Specific colors */
+.save-btn {
+  background-color: #4CAF50; /* green */
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #45a049;
+}
+
+.cancel-btn {
+  background-color: #f44336; /* red */
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #da190b;
+}
+
+.edit-btn {
+  background-color: #008CBA; /* blue */
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #007bb5;
+}
+
 
