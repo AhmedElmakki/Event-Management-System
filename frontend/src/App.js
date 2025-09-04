@@ -12,6 +12,7 @@ import Signup from "./pages/Signup"
 import ManageUsers from "./pages/manageusers"
 import BookingTickets from "./pages/bookingtickets"
 import ExportData from "./pages/ExportData"
+import MyBooking from "./pages/mybooking"
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/bookingtickets" element={<PrivateRoute><BookingTickets /></PrivateRoute>} />
         <Route path="/ManageUsers" element={<PrivateRoute><ManageUsers /></PrivateRoute>} />
         <Route path="/exportdata" element={<PrivateRoute><ExportData /></PrivateRoute>} />
+        <Route path="/mybooking" element={<PrivateRoute><MyBooking /></PrivateRoute>} />
         <Route path="/AttendeesDetails/:id" element={<PrivateRoute><AttendeesDetails /></PrivateRoute>} />
         <Route path="/AddEvent" element={<PrivateRoute><AddEvent /></PrivateRoute>} />
         <Route path="/EventDetails/:id" element={<PrivateRoute><EventDetails /></PrivateRoute>} />

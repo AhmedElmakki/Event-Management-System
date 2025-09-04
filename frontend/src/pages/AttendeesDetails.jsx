@@ -213,7 +213,7 @@ const ageGroupCounts = ageGroups.map(group => {
                 <div className="dashboard-card attendees-sub-graph2" style={{ flex: 1 }}>
                   <h3>Top Countries</h3>
                   {top4Countries.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={250}>
+                    <ResponsiveContainer width="100%" height={350}>
                       <BarChart
                         data={top4Countries}
                         margin={{ top: 20, right: 30, left: 20, bottom: 20 }}

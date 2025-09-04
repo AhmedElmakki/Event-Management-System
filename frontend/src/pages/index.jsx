@@ -20,17 +20,19 @@ import calendarIcon from "../materials/calender.svg";
 import search from "../materials/search icon.svg";
 
 export default function Index() {
-  const [user, setUser] = useState({ username: "", role: "" });
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const role = localStorage.getItem("role"); // "admin" or "user"
 
-  // ✅ Always call hooks — never conditionally
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
+const [user, setUser] = useState({ name: "", role: "" });
+
+
+useEffect(() => {
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) setUser(JSON.parse(storedUser));
+}, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,7 +101,7 @@ export default function Index() {
           <div className="search">
             <div className="pfp"></div>
             <div className="userinfo">
-              <div className="welcome">Welcome {user.username}</div>
+              <div className="welcome">Welcome {user.name || user.username}</div>
               <div className="role">{user.role}</div>
             </div>
             <div className="utility">

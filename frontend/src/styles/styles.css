@@ -540,7 +540,7 @@ table th {
   grid-template-columns: 3fr 3fr;
   gap: 10px;
   margin-top: 10px;
-  height: 300px;
+  height: 400px;
   margin-bottom: 10px;
 }
 
@@ -807,6 +807,24 @@ table th {
 
 .main-content .join .btn-join:hover {
   background: #608133;
+}
+
+
+.main-content .qr-placeholder .btn-pay {
+  background: #3908be;
+  color: white;
+  padding: 10px 15px;
+  width: 150px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.main-content .qr-placeholder .btn-pay:hover {
+  background: #2a0591;
 }
 
 

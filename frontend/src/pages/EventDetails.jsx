@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function EventDetails() {
   const { id } = useParams(); 
@@ -11,6 +12,18 @@ export default function EventDetails() {
   const [event, setEvent] = useState(null);
   const [isJoined, setIsJoined] = useState(false);
   const [joinError, setJoinError] = useState("");
+  const [bookedTickets, setBookedTickets] = useState([]);
+
+  const handlePayment = () => {
+  if (!isJoined) {
+    alert("You must join the event first!");
+    return;
+  }
+
+  alert(`Payment successful for ${event.name}!`);
+
+  setBookedTickets((prev) => [...prev, event]);
+};
 
   // helper: check if user is in participants
   const isUserJoined = (participants, userId) => {
@@ -147,7 +160,25 @@ export default function EventDetails() {
                   </div>
                 </div>
 
-                <div className="qr-placeholder">QR code payment area</div>
+                <div className="qr-placeholder" style={{ textAlign: "center", marginTop: "15px" }}>
+                {!bookedTickets.includes(event) && isJoined && (
+                  <button
+                    type="button"
+                    className="btn-pay"
+                    onClick={handlePayment}
+                    style={{ marginBottom: "10px" }}
+                  >
+                    Pay Now
+                  </button>
+                )}
+
+                {bookedTickets.includes(event) && (
+                  <QRCodeCanvas
+                    value={`Ticket for ${event.name} - ${event._id} - User: ${userId}`}
+                    size={120}
+                  />
+                  )}
+              </div>
 
                 <div className="form-actions">
                   

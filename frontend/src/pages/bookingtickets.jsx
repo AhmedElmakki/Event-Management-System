@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import searchIcon from "../materials/search icon.svg";
+import QRCode from "qrcode.react";
 
 export default function BookingTickets() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [bookedTickets, setBookedTickets] = useState([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -21,6 +23,16 @@ export default function BookingTickets() {
         setLoading(false);
       }
     };
+
+    const handlePayment = (event) => {
+  // Simulate payment
+  alert(`Payment successful for ${event.name}`);
+
+  // Add to booked tickets (for QR code)
+  setBookedTickets((prev) => [...prev, event]);
+};
+
+
     fetchEvents();
   }, []);
 

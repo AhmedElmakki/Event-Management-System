@@ -70,10 +70,12 @@ function logout() {
             maxHeight: activeSections["Main Navigation"] ? "500px" : "0",
           }}
         >
+
+          {role === "admin" && (
           <a onClick={() => navigate("/")} className="menu-item">
             📊 Dashboard
           </a>
-
+            )}
           {role === "admin" && (
           <a onClick={() => navigate("/manage-event")} className="menu-item">
             📅 Manage Events
@@ -84,17 +86,14 @@ function logout() {
           <a onClick={() => navigate("/AttendeesInsight")} className="menu-item">
             👥 Attendee Insights
           </a>
-
-          
-
-          
            )}
-
               {role === "admin" && (
                 <a onClick={() => navigate("/ExportData")} className="menu-item">
             📅 Export Data
               </a>
           )}
+
+          <a onClick={() => navigate("/mybooking")} className="menu-item">🎟️ My Booking</a>
 
         </div>
 
