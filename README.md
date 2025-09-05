@@ -35,6 +35,7 @@ EventX is a full-stack web application for managing and attending events. Users 
 
 ## Project Structure
 
+```bash
 react-final-project/
 ├─ backend/
 │ ├─ models/ # Mongoose models
@@ -57,7 +58,7 @@ react-final-project/
 │ │ └─ App.js
 │ └─ package.json
 └─ package.json # Project root (concurrently setup)
-
+```
 
 ---
 
