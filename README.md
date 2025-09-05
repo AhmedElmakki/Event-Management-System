@@ -184,7 +184,7 @@ Excel import/export only supports .xlsx files.
 
 
 
-## 1. /Signup → <Signup />
+## 1. Signup
 
 Purpose: Allows new users to SignUp.
 
@@ -196,7 +196,7 @@ Access: Public.
 ---
 
 
-## 2. /Login → <Login />
+## 2. Login 
 
 Purpose: Authentication page for users to log in.
 
@@ -206,7 +206,7 @@ Access: Public.
 
 
 
-## 3. / → <Index />
+## 3. Index
 
 Purpose: This is the dashboard or home page for admins (protected by PrivateRoute).
 
@@ -217,7 +217,7 @@ Access: Admins only
 
 ---
 
-## 4. / AddEvent → <AddEvent />
+## 4. AddEvent 
 
 Purpose: Admin page to create a new event.
 
@@ -288,7 +288,7 @@ Access: Admin only.
 
 ---
 
-## 10. /ManageUsers → <ManageUsers />
+## 10. ManageUsers
 
 Purpose: Admin page to manage users.
 
