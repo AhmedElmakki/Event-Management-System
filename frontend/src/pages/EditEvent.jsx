@@ -19,13 +19,16 @@ export default function EditEvent() {
   const { id } = useParams();
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
+  const [loading, setLoading] = useState(false);
 
+  // Redirect non-admins
   useEffect(() => {
     if (role !== "admin") {
       navigate(`/EventDetails/${id}`);
     }
   }, [role, navigate, id]);
 
+  // Fetch event data
   useEffect(() => {
     const fetchEvent = async () => {
       try {
@@ -52,14 +55,16 @@ export default function EditEvent() {
     fetchEvent();
   }, [id]);
 
-  // ✅ universal input handler
+  // Universal input handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Save edits
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -82,8 +87,41 @@ export default function EditEvent() {
       navigate(`/EventDetails/${id}`);
     } catch (err) {
       console.error(err);
+      alert("Error updating event: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+const handleDelete = async () => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this event? This action cannot be undone."
+  );
+  if (!confirmDelete) return;
+
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`http://localhost:5000/api/events/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json(); // parse the backend response
+
+    if (!res.ok) {
+      // Show the message from the backend if available
+      throw new Error(data.message || "Failed to delete event");
+    }
+
+    alert(data.message); // usually "Event deleted successfully"
+    navigate("/manage-event"); // redirect back to event list
+  } catch (err) {
+    console.error("Error deleting event:", err);
+    alert("Error deleting event: " + err.message);
+  }
+};
 
   return (
     <div className="global-body">
@@ -105,6 +143,7 @@ export default function EditEvent() {
                   id="name"
                   value={formData.name}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -115,6 +154,7 @@ export default function EditEvent() {
                   id="date"
                   value={formData.date}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -129,6 +169,7 @@ export default function EditEvent() {
                   id="venue"
                   value={formData.venue}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -139,6 +180,7 @@ export default function EditEvent() {
                   id="time"
                   value={formData.time}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -153,6 +195,7 @@ export default function EditEvent() {
                   id="description"
                   value={formData.description}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -167,6 +210,7 @@ export default function EditEvent() {
                   id="ticketPrice"
                   value={formData.ticketPrice}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
 
@@ -178,6 +222,7 @@ export default function EditEvent() {
                   id="seatAmount"
                   value={formData.seatAmount}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
 
@@ -189,6 +234,7 @@ export default function EditEvent() {
                   id="availableSeats"
                   value={formData.availableSeats}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
 
@@ -201,21 +247,34 @@ export default function EditEvent() {
                   value={formData.tags}
                   onChange={handleChange}
                   placeholder="Comma separated tags"
+                  disabled={loading}
                 />
               </div>
             </div>
 
-            {/* Section 5 */}
+            {/* Section 5: Buttons */}
             <div className="form-actions">
-              <button type="submit" className="btn-save">
-                Save
+              <button type="submit" className="btn-save" disabled={loading}>
+                {loading ? "Saving..." : "Save"}
               </button>
+
               <button
                 type="button"
                 className="btn-cancel"
                 onClick={() => navigate(`/EventDetails/${id}`)}
+                disabled={loading}
               >
                 Cancel
+              </button>
+
+              <button
+                type="button"
+                className="btn-delete"
+                onClick={handleDelete}
+                style={{ backgroundColor: "#e74c3c", color: "#fff", marginLeft: "10px" }}
+                disabled={loading}
+              >
+                {loading ? "Processing..." : "Delete"}
               </button>
             </div>
           </form>

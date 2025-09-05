@@ -10,6 +10,7 @@ import eventRoutes from "./routes/events.js";
 import userRoutes from "./routes/users.js"; 
 
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
