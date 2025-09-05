@@ -112,6 +112,8 @@ npm run dev
 Backend: http://localhost:5000
 Frontend: http://localhost:3000
 
+---
+
 
 #### Database Scripts
 
@@ -173,5 +175,167 @@ Tested with Node.js 22.x, npm 9.x, MongoDB 6.x, React 18.3.
 Make sure MongoDB is running locally before starting the app.
 
 Excel import/export only supports .xlsx files.
+
+
+---
+
+
+# App report 
+
+
+
+## 1. /Signup → <Signup />
+
+Purpose: Allows new users to SignUp.
+
+Content: Form for name, email, password, role needs to be adjusted from the database, admins can make others admin in a different page, and other profile info.
+
+Access: Public.
+
+
+---
+
+
+## 2. /Login → <Login />
+
+Purpose: Authentication page for users to log in.
+
+Content: Form for username and password.redirect after login.
+
+Access: Public.
+
+
+
+## 3. / → <Index />
+
+Purpose: This is the dashboard or home page for admins (protected by PrivateRoute).
+
+Content: Shows key statistics (total events, revenue, bookings) and charts (ticket sales, top events). also shows upcoming events in a side.
+
+Access: Admins only
+
+
+---
+
+## 4. / AddEvent → <AddEvent />
+
+Purpose: Admin page to create a new event.
+
+Content: Form with fields like name, date, time, venue, ticket price, seat count, description, and tags.
+
+Access: Admin only.
+
+
+---
+
+
+## 5. EventDetails
+
+Purpose: Shows detailed info about a specific event.
+
+Content: Event description, date/time, venue, ticket info, participants, and maybe admin controls for editing and inspecting
+
+Access: Admin only.
+
+
+---
+
+
+## 6. EditEvent
+
+Purpose: Admin page to edit an existing event.
+
+Content: Pre-filled form for updating event info.
+
+Access: Admin.
+
+
+
+
+## 7. ManageEvent
+
+Purpose: Allows admins to manage all events.
+
+Content: A list of events with options to edit, delete, or view details. includes filtering/search features.
+
+Access: Admin only.
+
+
+---
+
+
+## 8. AttendeesDetails
+
+
+Purpose: Shows detailed info about attendees for a specific event.
+
+Content: table listing attendees, with booking status.
+
+Access: Admin only.
+
+
+---
+
+
+
+## 9. AttendeesInsight
+
+Purpose: Displays analytics about attendees.
+
+Content: Charts or summaries showing attendee demographics, event popularity, or ticket sales.
+
+Access: Admin only.
+
+---
+
+## 10. /ManageUsers → <ManageUsers />
+
+Purpose: Admin page to manage users.
+
+Content: List of users with roles, option to edit roles and their details, or see user details.
+
+Access: Admin only.
+
+---
+
+## 11. BookingTickets
+
+Purpose: Page where users can book tickets for events.
+
+Content: List of available events with ticket prices, seat availability, and join button.
+
+Access: All logged-in users.
+
+
+---
+
+
+## 12. MyBooking
+
+Purpose: Lets a user view their booked events.
+
+Content: Shows tickets they have purchased, with QR codes, dates, and event details.
+
+Access: Logged-in users.
+
+
+---
+
+
+## 13. ExportData
+
+Purpose: Allows admin to export or import user and event data.
+
+Content: Buttons to download users/events as Excel or upload Excel to import data.
+
+Access: Admin only.
+
+
+
+
+
+
+
+
 
 
