@@ -355,6 +355,42 @@ table th {
   color: white;
 }
 
+
+.btn-all {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 15px;
+  background-color: transparent;
+  color: #08e03e;
+  border: 2px solid #08e03e;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-all:hover {
+  background-color: #036d1e;
+  color: white;
+}
+
+
+.btn-import {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 15px;
+  background-color: transparent;
+  color: #07b1a3;
+  border: 2px solid #07b1a3;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-import:hover {
+  background-color: #06746a;
+  color: white;
+}
+
 .btn-att {
   padding: 8px 14px;
   border: none;

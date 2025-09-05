@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.js";
 import eventRoutes from "./routes/events.js";
 import userRoutes from "./routes/users.js"; 
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -23,6 +24,7 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/users", userRoutes);
+
 
 // Example protected route
 app.get("/api/admin", (req, res) => {

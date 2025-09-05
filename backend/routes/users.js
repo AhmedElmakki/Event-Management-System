@@ -37,4 +37,27 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.post("/import", async (req, res) => {
+  try {
+    const users = req.body;
+    await User.insertMany(users, { ordered: false }); // skip duplicates
+    res.json({ message: "Users imported successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error importing users", error: err });
+  }
+});
+
+// routes/events.js
+router.post("/import", async (req, res) => {
+  try {
+    const events = req.body;
+    await Event.insertMany(events, { ordered: false });
+    res.json({ message: "Events imported successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error importing events", error: err });
+  }
+});
+
 export default router;
